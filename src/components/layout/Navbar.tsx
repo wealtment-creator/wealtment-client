@@ -8,7 +8,7 @@ import { getUser, removeUser } from "@/lib/auth";
 import type { User } from "@/types";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import logo from "../../../.next/cache/images/wealtment-logo.jpeg";       
+// import logo from "../../../.next/cache/images/wealtment-logo.jpeg";       
 
 const PUBLIC_LINKS = [
   { label: "Home",       href: "/" },
@@ -74,7 +74,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--gold)] to-[var(--gold-2)] flex items-center justify-center overflow-hidden">
-            <Image src={logo} alt="Elite Finex" width={120} height={40} priority />
+            {/* <Image src={logo} alt="Elite Finex" width={120} height={40} priority /> */}
 
           </div>
           <span className="font-display font-bold text-sm tracking-wider text-gold-grad hidden sm:block">
