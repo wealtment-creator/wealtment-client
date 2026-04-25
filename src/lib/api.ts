@@ -8,7 +8,7 @@ export const apiSignup = (body: {
   password: string;
   bitcoinAddress?: string;
   litecoinAddress?: string;
-  referralCode?: string;
+  referral?: string;
 }) => endpointRoute.post("/auth/signup", body).then((r) => r.data);
 
 export const apiLogin = (body: { email: string; password: string }) =>
