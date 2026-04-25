@@ -35,13 +35,8 @@ const STEPS = [
 
 
 export default function HomePage() {
-  const size = 3;
-const { page } = useAutoScroll(DEPOSITS.length, size);
 
-const visibleItems = DEPOSITS.slice(
-  page * size,
-  page * size + size
-);
+
 
   return (
     <>

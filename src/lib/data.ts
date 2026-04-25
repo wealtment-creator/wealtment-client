@@ -38,17 +38,39 @@ export const DEPOSIT_ADDRESSES: Record<"BTC" | "LTC"|"bitcoin"|"litecoin", strin
 };
 
 export const DEPOSITS = [
-  { name: "Sweet", amount: 1311 }, { name: "Koby", amount: 1726 },
-  { name: "Aaron", amount: 175 },  { name: "Kuba",  amount: 1558 },
-  { name: "Elshan",amount: 1016 }, { name: "Valentine", amount: 1081 },
-  { name: "Mason", amount: 1092 }, { name: "Aleksandrs", amount: 980 },
+  { name: "Sweet", amount: 1311 },
+  { name: "Koby", amount: 1726 },
+  { name: "Aaron", amount: 175 },
+  { name: "Kuba", amount: 1558 },
+  { name: "Elshan", amount: 1016 },
+  { name: "Valentine", amount: 1081 },
+  { name: "Mason", amount: 1092 },
+  { name: "Aleksandrs", amount: 980 },
+  { name: "Daniel", amount: 1420 },
+  { name: "Ibrahim", amount: 890 },
+  { name: "Samuel", amount: 1205 },
+  { name: "Tariq", amount: 1675 },
+  { name: "Victor", amount: 1340 },
+  { name: "Hassan", amount: 1580 },
+  { name: "Leon", amount: 1120 },
 ];
 
 export const WITHDRAWALS = [
-  { name: "Antonyo", amount: 620 },  { name: "Brydon",  amount: 1620 },
-  { name: "Bryden",  amount: 210 },  { name: "Kylian",  amount: 82 },
-  { name: "Caley",   amount: 993 },  { name: "Munachi", amount: 1702 },
-  { name: "Hasan",   amount: 697 },  { name: "Faizaan", amount: 1609 },
+  { name: "Antonyo", amount: 620 },
+  { name: "Brydon", amount: 1620 },
+  { name: "Bryden", amount: 210 },
+  { name: "Kylian", amount: 82 },
+  { name: "Caley", amount: 993 },
+  { name: "Munachi", amount: 1702 },
+  { name: "Hasan", amount: 697 },
+  { name: "Faizaan", amount: 1609 },
+  { name: "Chinedu", amount: 540 },
+  { name: "Emeka", amount: 880 },
+  { name: "Abdullahi", amount: 1290 },
+  { name: "Sadiq", amount: 760 },
+  { name: "Oluwaseun", amount: 1115 },
+  { name: "Umar", amount: 930 },
+  { name: "Bello", amount: 1450 },
 ];
 
 export const FAQS = [
