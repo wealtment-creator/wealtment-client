@@ -9,7 +9,7 @@ const FEATURES = [
   { icon: <Globe size={20} />, title: "24/7 Customer Support", text: "Support representatives are always available to answer any questions via email." },
   { icon: <Server size={20} />, title: "Dedicated Server", text: "Highest-level DDoS protection on dedicated servers to keep your funds safe." },
   { icon: <Lock size={20} />, title: "EV SSL Security", text: "256-bit encryption from Comodo with Extended Validation verifies our company." },
-  { icon: <Flag size={20} />, title: "UK Registered Company", text: "Legally registered in England & Wales as 'Elite Finex Limited'." },
+  { icon: <Flag size={20} />, title: "UK Registered Company", text: "Legally registered in England & Wales as 'WEALTMENT Limited'." },
   { icon: <Zap size={20} />, title: "Instant Withdrawals", text: "All withdrawals processed instantly. Minimum withdrawal is $10." },
   { icon: <Shield size={20} />, title: "DDoS Protection", text: "Our infrastructure resists attacks of any size with enterprise-grade protection." },
 ];
@@ -29,13 +29,13 @@ export default function AboutPage() {
             <h1 className="font-display text-5xl font-black mt-3 mb-6 leading-tight">
               Welcome to <span className="text-gold-grad">Wealtment Limited</span>
             </h1>
-            <p className="text-[var(--muted-2)] leading-relaxed mb-5">
-             Wealtment Limited is a true opportunity to earn on Forex Trading. Nowadays Forex Trading is one of the main payment instruments which can be used online — and we&apos;ve been using digital assets to gain and raise profit since 2019.
+            <p className="text-lg text-gray-200 leading-relaxed mb-5">
+             Wealtment Limited is a true opportunity to earn on Forex Trading. Nowadays Forex Trading is one of the main payment instruments which can be used online — and we&apos;ve been using digital assets to gain and raise profit since 17th February 2021
             </p>
-            <p className="text-[var(--muted-2)] leading-relaxed mb-5">
+            <p className="text-lg text-gray-200 leading-relaxed mb-5">
               We are an officially registered company which gives our clients all required guarantees, including full confidentiality of data provided during registration. We guarantee payment accruals in due time and full amounts.
             </p>
-            <p className="text-[var(--muted-2)] leading-relaxed mb-8">
+            <p className="text-lg text-gray-200 leading-relaxed mb-8">
               Our company&apos;s system, including support service, works 24 hours a day. You are always welcome to contact our experts with any questions.
             </p>
             <div className="flex flex-wrap gap-3">
@@ -61,7 +61,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 flex items-center px-8 sm:px-16">
           <div>
             <h2 className="font-display text-3xl font-black text-gold-grad mb-2">Our Mission</h2>
-            <p className="text-[var(--muted-2)] max-w-xl text-lg">
+            <p className=" text-gray-200 max-w-xl text-lg">
               Making professional-grade investment tools accessible to every investor worldwide.
             </p>
           </div>
@@ -79,16 +79,16 @@ export default function AboutPage() {
             <h2 className="font-display text-4xl font-bold mt-3 mb-6">
               Providing <span className="text-gold-grad">Real Opportunities</span>
             </h2>
-            <p className="text-[var(--muted-2)] leading-relaxed mb-4">
-              Elite Finex Limited provides its clients with an opportunity to invest money into Forex Trading to obtain a big income later — which can be achieved even without direct client participation.
+            <p className="text-lg text-gray-200 leading-relaxed mb-4">
+              Wealtment Limited provides its clients with an opportunity to invest money into Forex Trading to obtain a big income later — which can be achieved even without direct client participation.
             </p>
-            <p className="text-[var(--muted-2)] leading-relaxed mb-6">
+            <p className="text-lg text-gray-200 leading-relaxed mb-6">
               The company actively uses trading bots on digital currency markets, which is very convenient and profitable. We also attract new partners and share our experience with like-minded people worldwide.
             </p>
             {["Algorithmic trading bots active 24/7", "Instant withdrawal processing", "UK regulatory compliance", "Military-grade data encryption"].map((item) => (
               <div key={item} className="flex items-center gap-3 mb-3">
                 <CheckCircle size={16} className="text-[var(--gold)] shrink-0" />
-                <span className="text-sm text-[var(--muted-2)]">{item}</span>
+                <span className="text-lg text-gray-200]">{item}</span>
               </div>
             ))}
           </div>
@@ -109,7 +109,7 @@ export default function AboutPage() {
                   {f.icon}
                 </div>
                 <h3 className="font-semibold mb-2">{f.title}</h3>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">{f.text}</p>
+                <p className=" text-gray-200 leading-relaxed">{f.text}</p>
               </div>
             ))}
           </div>

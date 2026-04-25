@@ -75,7 +75,7 @@ export default function ResetPasswordPage() {
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--gold)] to-[var(--gold-2)] flex items-center justify-center">
             <TrendingUp size={17} className="text-black" />
           </div>
-          <span className="font-display font-bold text-lg tracking-wider text-gold-grad">ELITE FINEX</span>
+          <span className="font-display font-bold text-lg tracking-wider text-gold-grad">WEALTMENT</span>
         </div>
         <Suspense fallback={<p className="text-[var(--muted)] text-sm">Loading…</p>}>
           <ResetForm />

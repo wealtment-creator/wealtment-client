@@ -15,7 +15,7 @@ const PUBLIC_LINKS = [
   { label: "FAQ",        href: "/faq" },
   { label: "Plans",      href: "/plans" },
   { label: "Affiliates", href: "/affiliates" },
-  { label: "Support",    href: "/support" },
+  { label: "Contact",    href: "/contact" },
 ];
 
 export function Navbar() {
@@ -66,14 +66,15 @@ let logo ="https://i.postimg.cc/VzFr6Zvn/wealtment.jpg"
         ? "text-[var(--gold)] bg-[var(--gold-glow)]"
         : "text-[var(--muted-2)] hover:text-[var(--gold)]"
     }`;
-
+console.log('user',user)
+let isUser=user?.role=="user"
   return (
     <header className="fixed top-0 inset-x-0 z-50 border-b border-[var(--border)] bg-[rgba(6,13,21,0.95)] backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--gold)] to-[var(--gold-2)] flex items-center justify-center overflow-hidden">
-            <Image src={logo} alt="Elite Finex" width={120} height={40} priority />
+            <Image src={logo} alt="wealtment" width={120} height={40} priority />
 
           </div>
           <span className="font-display font-bold text-sm tracking-wider text-gold-grad hidden sm:block">
@@ -85,8 +86,12 @@ let logo ="https://i.postimg.cc/VzFr6Zvn/wealtment.jpg"
         <nav className="hidden lg:flex items-center gap-1">
           {user ? (
             <>
-              <Link href="/user/dashboard" className={linkCls("/user/dashboard")}>Dashboard</Link>
-              <Link href="/user/packages" className={linkCls("/user/packages")}>My Packages</Link>
+            
+            <button className="text-[var(--gold)] bg-[var(--gold-glow)]">
+                            <Link  href={isUser?`/user/dashboard`:'/admin'} className={linkCls(`${isUser?'/user/dashboard':'/admin'}`)}>Dashboard</Link>
+
+            </button>
+          {isUser&&<Link href="/user/packages" className={linkCls("/user/packages")}>My Packages</Link>}
               {user.isAdmin && (
                 <Link href="/admin" className={linkCls("/admin")}>Admin</Link>
               )}
@@ -145,8 +150,8 @@ let logo ="https://i.postimg.cc/VzFr6Zvn/wealtment.jpg"
         <div className="lg:hidden bg-[var(--bg-2)] border-t border-[var(--border)] px-4 py-4 flex flex-col gap-1">
           {user ? (
             <>
-              <MobLink href="/user/dashboard" label="Dashboard" close={() => setOpen(false)} />
-              <MobLink href="/user/packages" label="My Packages" close={() => setOpen(false)} />
+             {isUser&&<>  <MobLink href="/user/dashboard" label="Dashboard" close={() => setOpen(false)} />
+              <MobLink href="/user/packages" label="My Packages" close={() => setOpen(false)} /></>}
               {user.isAdmin && <MobLink href="/admin" label="Admin" close={() => setOpen(false)} />}
               <button onClick={logout} className="text-left text-sm py-2 text-[var(--red)] font-semibold">
                 Logout

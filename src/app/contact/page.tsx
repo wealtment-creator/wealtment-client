@@ -41,8 +41,8 @@ export default function ContactPage() {
             {/* Cards */}
             <div className="space-y-4">
               {[
-                { icon: <Mail size={20} />, title: "Email Us", lines: ["support@elitefinex.com", "accounts@elitefinex.com"] },
-                { icon: <Globe size={20} />, title: "Online", lines: ["www.elitefinex.com", "Available 24/7"] },
+                { icon: <Mail size={20} />, title: "Email Us", lines: ["wealtment@gmail.com"] },
+                { icon: <Globe size={20} />, title: "Online", lines: ["www.wealtment.com", "Available 24/7"] },
                 { icon: <MapPin size={20} />, title: "Registered", lines: ["United Kingdom", "England & Wales"] },
               ].map((c) => (
                 <div key={c.title} className="glass rounded-xl p-5 flex gap-4">
@@ -59,7 +59,7 @@ export default function ContactPage() {
               {/* Map placeholder */}
               <div className="glass rounded-xl p-8 text-center">
                 <MapPin size={32} className="text-[var(--gold)] mx-auto mb-3" />
-                <p className="text-sm font-semibold">Elite Finex Limited</p>
+                <p className="text-sm font-semibold">Wealtment Limited</p>
                 <p className="text-xs text-[var(--muted)] mt-1">Registered in England & Wales</p>
                 <p className="text-xs text-[var(--muted)]">United Kingdom</p>
               </div>

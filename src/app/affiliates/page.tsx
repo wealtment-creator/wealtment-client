@@ -20,10 +20,10 @@ export default function AffiliatesPage() {
               <h1 className="font-display text-5xl font-black mt-3 mb-6">
                 Earn Without <span className="text-gold-grad">Investing</span>
               </h1>
-              <p className="text-[var(--muted-2)] leading-relaxed mb-4">
+              <p className="text-lg text-gray-200 leading-relaxed mb-4">
                 Even if you do not make a deposit, it is still possible to earn with Wealtment Limited! Take part in our referral program which offers commissions up to 10%.
               </p>
-              <p className="text-[var(--muted-2)] leading-relaxed mb-8">
+              <p className="text-lg text-gray-200 leading-relaxed mb-8">
                 You earn a percentage of every deposit made through your referral link. Commissions are immediately credited and can be withdrawn instantly!
               </p>
               <Link href="/signup" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-[var(--gold)] to-[var(--gold-2)] text-black font-bold text-sm hover:opacity-90 transition-opacity">
@@ -47,7 +47,7 @@ export default function AffiliatesPage() {
               <div key={t.level} className="glass rounded-2xl p-8 text-center hover:border-[var(--gold)] transition-colors">
                 <p className="font-display text-6xl font-black text-gold-grad mb-2">{t.pct}</p>
                 <p className="text-xs font-bold tracking-[2px] uppercase text-[var(--muted)] mb-3">{t.level}</p>
-                <p className="text-sm text-[var(--muted-2)]">{t.desc}</p>
+                <p className="text-lg text-gray-200">{t.desc}</p>
               </div>
             ))}
           </div>
@@ -63,8 +63,8 @@ export default function AffiliatesPage() {
                 <div className="w-10 h-10 rounded-lg bg-[var(--gold-glow)] flex items-center justify-center text-[var(--gold)] mb-5 group-hover:scale-110 transition-transform">
                   {f.icon}
                 </div>
-                <h3 className="font-semibold mb-2">{f.title}</h3>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">{f.text}</p>
+                <h3 className="font-semibold mb-2 text-2xl">{f.title}</h3>
+                <p className="text-lg text-gray-200 leading-relaxed">{f.text}</p>
               </div>
             ))}
           </div>

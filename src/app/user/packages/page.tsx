@@ -107,17 +107,27 @@ export default function UserPackagesPage() {
         {loadingPlans ? (
           <div className="flex items-center justify-center py-20"><Loader size={28} className="text-[var(--gold)] animate-spin" /></div>
         ) : (
-          <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             {plans.map((p) => {
               const isActive = active(p);
               return (
                 <div key={p._id} className={`relative rounded-2xl p-5 sm:p-6 flex flex-col transition-all hover:-translate-y-1 ${isActive ? "border-2 border-[var(--gold)] bg-[rgba(212,168,67,0.06)]" : p.featured ? "border border-[var(--gold)] bg-gradient-to-b from-[rgba(212,168,67,0.05)] to-[var(--bg-card)]" : "glass hover:border-[var(--gold)]"}`}>
                   {isActive && <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[var(--gold)] text-black whitespace-nowrap">Active</span>}
                   {p.featured && !isActive && <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-gradient-to-r from-[var(--gold)] to-[var(--gold-2)] text-black whitespace-nowrap">Popular</span>}
-                  <p className="text-[10px] font-bold tracking-[2px] uppercase text-[var(--muted)] mb-3">{p.name}</p>
+                  {/* <p className="text-[10px] font-bold tracking-[2px] uppercase text-[var(--muted)] mb-3">{p.name}</p>
                   <p className="font-display text-4xl sm:text-5xl font-black text-[var(--gold)]">{rate(p)}%</p>
                   <p className="text-xs text-[var(--muted)] mt-0.5 mb-1">ROI</p>
                   <p className="text-sm font-semibold text-[var(--teal)] mb-4">After {durationLabel(p)}</p>
+                  <div className="border-t border-[var(--border)] pt-3 space-y-2 flex-1">
+                    {[["Min", formatUSD(minAmt(p))], ["Max", maxAmt(p) ? formatUSD(maxAmt(p)!) : "Unlimited"], ["Duration", durationLabel(p)]].map(([k, v]) => (
+                      <div key={k} className="flex justify-between text-xs sm:text-sm"><span className="text-[var(--muted)]">{k}</span><span className="font-semibold">{v}</span></div>
+                    ))}
+                  </div> */}
+
+                   <button className="text-[10px] font-bold p-3 rounded-full tracking-[2px] uppercase text-center text-lg  text-black mb-3 bg-[var(--gold)]">{p.name}</button>
+                  <p className="font-display text-4xl sm:text-5xl font-black text-[var(--gold)]">{rate(p)}%</p>
+                  <p className="text-xs text-[var(--muted)] mt-0.5 mb-1">ROI</p>
+                  <p className="text-lg font-semibold text-[var(--teal)] mb-4">After {durationLabel(p)}</p>
                   <div className="border-t border-[var(--border)] pt-3 space-y-2 flex-1">
                     {[["Min", formatUSD(minAmt(p))], ["Max", maxAmt(p) ? formatUSD(maxAmt(p)!) : "Unlimited"], ["Duration", durationLabel(p)]].map(([k, v]) => (
                       <div key={k} className="flex justify-between text-xs sm:text-sm"><span className="text-[var(--muted)]">{k}</span><span className="font-semibold">{v}</span></div>
