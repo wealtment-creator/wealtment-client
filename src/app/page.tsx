@@ -122,19 +122,7 @@ const visibleItems = DEPOSITS.slice(
         </div>
       </section>
 
-      {/* ── COIN IMAGES STRIP ─────────────────────────────────────── */}
-      <section className="border-y border-[var(--border)] overflow-hidden">
-        <div className="grid grid-cols-3 h-52">
-          {[CRYPTO_IMAGES.bitcoin, CRYPTO_IMAGES.ethereum, CRYPTO_IMAGES.coins].map((src, i) => (
-            <div key={i} className="relative overflow-hidden">
-              <Image src={src} alt="crypto" fill className="object-cover opacity-70 hover:opacity-100 transition-opacity hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-transparent to-[var(--bg)]" />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── PLANS ─────────────────────────────────────────────────── */}
+  {/* ── PLANS ─────────────────────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 relative">
         <div className="absolute inset-0 dot-pattern opacity-50" />
         <div className="relative max-w-7xl mx-auto">
@@ -190,6 +178,19 @@ const visibleItems = DEPOSITS.slice(
           </div> */}
         </div>
       </section>
+      {/* ── COIN IMAGES STRIP ─────────────────────────────────────── */}
+      <section className="border-y border-[var(--border)] overflow-hidden">
+        <div className="grid grid-cols-3 h-52">
+          {[CRYPTO_IMAGES.bitcoin, CRYPTO_IMAGES.ethereum, CRYPTO_IMAGES.coins].map((src, i) => (
+            <div key={i} className="relative overflow-hidden">
+              <Image src={src} alt="crypto" fill className="object-cover opacity-70 hover:opacity-100 transition-opacity hover:scale-105 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-transparent to-[var(--bg)]" />
+            </div>
+          ))}
+        </div>
+      </section>
+
+    
 
       {/* ── BITCOIN IMAGE BANNER ──────────────────────────────────── */}
       <section className="relative h-72 overflow-hidden border-y border-[var(--border)]">
@@ -197,8 +198,8 @@ const visibleItems = DEPOSITS.slice(
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-transparent to-[var(--bg)]" />
         <div className="absolute inset-0 flex items-center justify-center text-center px-4">
           <div>
-            <h2 className="font-display text-4xl font-black text-gold-grad mb-4">May 2, 2019</h2>
-            <p className="text-[var(--muted-2)] text-lg">Founded &amp; Trading Every Day Since</p>
+            <h2 className="font-display text-4xl font-black text-gold-grad mb-4">17th February 2021 </h2>
+            <p className="text-lg text-gray-200">Founded &amp; Trading Every Day Since</p>
           </div>
         </div>
       </section>
@@ -214,8 +215,8 @@ const visibleItems = DEPOSITS.slice(
             {STEPS.map((s) => (
               <div key={s.n} className="glass rounded-2xl p-6 hover:border-[var(--gold)] transition-colors">
                 <p className="font-display text-5xl font-black text-gold-grad opacity-40 mb-4">{s.n}</p>
-                <h3 className="font-semibold text-base mb-2">{s.title}</h3>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">{s.text}</p>
+                <h3 className="font-semibold text-2xl mb-2">{s.title}</h3>
+                <p className="text-lg text-gray-200 leading-relaxed">{s.text}</p>
               </div>
             ))}
           </div>
@@ -229,7 +230,7 @@ const visibleItems = DEPOSITS.slice(
             <div>
               <SectionTag>Features</SectionTag>
               <h2 className="font-display text-4xl font-bold mt-2">Why <span className="text-gold-grad">Wealtment?</span></h2>
-              <p className="text-[var(--muted-2)] mt-3 leading-relaxed">
+              <p className="text-lg text-gray-200 mt-3 leading-relaxed">
                 Built for serious investors. Every detail engineered for security, transparency, and maximum returns.
               </p>
             </div>
@@ -243,8 +244,8 @@ const visibleItems = DEPOSITS.slice(
                 <div className="w-10 h-10 rounded-lg bg-[var(--gold-glow)] flex items-center justify-center text-[var(--gold)] mb-4 group-hover:scale-110 transition-transform">
                   {f.icon}
                 </div>
-                <h3 className="font-semibold mb-2">{f.title}</h3>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">{f.text}</p>
+                <h3 className="font-semibold text-2xl mb-2">{f.title}</h3>
+                <p className="text-lg text-gray-200 leading-relaxed">{f.text}</p>
               </div>
             ))}
           </div>
@@ -263,10 +264,10 @@ const visibleItems = DEPOSITS.slice(
   { title: "Recent Deposits", items: DEPOSITS, positive: true },
   { title: "Recent Withdrawals", items: WITHDRAWALS, positive: false },
 ].map((col) => {
-  const size = 3;
+  const size = 1;
 
   // ✅ EACH column gets its own scroll state
-  const { page } = useAutoScroll(col.items.length, 1, 3000);
+  const { page } = useAutoScroll(col.items.length, 1, 5000);
 
   const visibleItems = col.items.slice(page, page + size);
 
@@ -284,7 +285,7 @@ const visibleItems = DEPOSITS.slice(
       </div>
 
       {/* SCROLL AREA */}
-      <div className="h-[180px] overflow-hidden">
+      <div className="h-[100px] overflow-hidden">
         <div className="animate-scroll-up">
           {visibleItems.map((d, i) => (
             <div
@@ -346,7 +347,7 @@ const visibleItems = DEPOSITS.slice(
           <h2 className="font-display text-4xl font-bold mt-2 mb-4">
             Ready to Start <span className="text-gold-grad">Earning?</span>
           </h2>
-          <p className="text-[var(--muted-2)] mb-8">Join 453,000+ investors earning daily returns with Wealtment Limited.</p>
+          <p className="text-lg text-gray-200 mb-8">Join 453,000+ investors earning daily returns with Wealtment Limited.</p>
           <Link href="/signup" className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-gradient-to-r from-[var(--gold)] to-[var(--gold-2)] text-black font-bold text-base hover:opacity-90 transition-opacity shadow-xl shadow-[var(--gold-glow)]">
             Open Free Account <ArrowRight size={18} />
           </Link>

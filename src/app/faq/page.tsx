@@ -16,7 +16,7 @@ export default function FaqPage() {
           <div className="text-center mb-14">
             <SectionTag>FAQ</SectionTag>
             <h1 className="font-display text-5xl font-black mt-2">Frequently Asked <span className="text-gold-grad">Questions</span></h1>
-            <p className="text-[var(--muted-2)] mt-4">Everything you need to know about Elite Finex Limited.</p>
+            <p className="text-[var(--muted-2)] mt-4">Everything you need to know about Wealtment Limited.</p>
           </div>
           <div className="space-y-3">
             {FAQS.map((f, i) => (

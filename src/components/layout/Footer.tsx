@@ -16,7 +16,7 @@ const COLS = [
     links: [
       { label: "Investment Plans", href: "/plans" },
       { label: "Affiliate Program", href: "/affiliates" },
-      { label: "Support", href: "/support" },
+      { label: "Support", href: "/contact" },
       { label: "Contact", href: "/contact" },
     ],
   },
@@ -47,7 +47,7 @@ export function Footer() {
               <span className="font-display font-bold text-base tracking-wider text-gold-grad">WEALTMENT</span>
             </Link>
             <p className="text-sm text-[var(--muted)] leading-relaxed max-w-xs">
-              Professional Forex & cryptocurrency trading platform. UK registered company providing secure, profitable investment solutions since 2019.
+              Professional Forex & cryptocurrency trading platform. UK registered company providing secure, profitable investment solutions since 17th February 2021
             </p>
             <div className="flex gap-2 mt-6">
               {[Shield, Lock, Award].map((Icon, i) => (

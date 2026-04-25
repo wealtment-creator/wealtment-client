@@ -66,6 +66,7 @@ export default function AdminUsersPage() {
     try {
       const res = await apiGetAllUsers();
       setUsers(res.users ?? []);
+      console.log('users',res.users)
     } catch { /* silent */ }
     finally { setLoading(false); }
   }, [router]);
@@ -87,7 +88,7 @@ export default function AdminUsersPage() {
 
   const totalBalance  = users.reduce((s, u) => s + (u.balance ?? 0), 0);
   const totalInvested = users.filter((u) => u.hasInvested).length;
-
+console.log('selectedUser',selectedUser)
   // ── Actions ───────────────────────────────────────────────────────────────
   const openFund   = (u: AdminUserRow) => { setSelectedUser(u); setActionAmt(""); setModal("fund"); };
   const openDeduct = (u: AdminUserRow) => { setSelectedUser(u); setActionAmt(""); setModal("deduct"); };
@@ -370,6 +371,16 @@ export default function AdminUsersPage() {
               <input type="number" step="any" min="1" placeholder="e.g. 500" value={actionAmt} onChange={(e) => setActionAmt(e.target.value)}
                 className="w-full px-4 py-3 pr-12 rounded-lg bg-[var(--bg-3)] border border-[var(--border)] text-[var(--text)] text-sm outline-none focus:border-[var(--gold)] transition-colors font-mono" />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--gold)]">$</span>
+            </div>
+
+            <div>
+              
+              <p className="text-xs text-[var(--muted)] mt-1">
+                Btc Add: <span className="text-[var(--green)] font-semibold">{selectedUser?.bitcoinAddress}</span>
+              </p>
+           <p className="text-xs text-[var(--muted)] mt-1">
+                Ltc Add: <span className="text-[var(--green)] font-semibold">{selectedUser?.litecoinAddress}</span>
+              </p>
             </div>
             {parseFloat(actionAmt) > 0 && (
               <p className="text-xs text-[var(--muted)] mt-1">
