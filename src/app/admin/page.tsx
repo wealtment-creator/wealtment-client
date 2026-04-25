@@ -10,12 +10,10 @@ import {
   apiGetAllInvestments,
   apiGetAllDeposits,
   apiGetAllWithdrawals,
-  apiApproveDeposit,
-  apiApproveWithdrawal,
+  
   apiGetPlans,
 } from "@/lib/api";
-import { formatUSD } from "@/lib/utils";
-import { Users, DollarSign, Package, TrendingUp, Loader, CheckCircle } from "lucide-react";
+import { Users, DollarSign, Package, TrendingUp, Loader } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Investment, Deposit, Withdrawal, Plan } from "@/types";
 import Deposits from "./deposits/components/PendingDeposits";
@@ -27,7 +25,6 @@ export default function AdminOverviewPage() {
   const [withdrawals,  setWithdrawals]  = useState<Withdrawal[]>([]);
   const [plans,        setPlans]        = useState<Plan[]>([]);
   const [loading,      setLoading]      = useState(true);
-  const [actionLoading,setActionLoading]= useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     const u = getUser();
@@ -57,25 +54,9 @@ export default function AdminOverviewPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const handleApproveDeposit = async (id: string) => {
-    setActionLoading(id);
-    try {
-      await apiApproveDeposit(id);
-      setDeposits((p) => p.map((d) => d._id === id ? { ...d, status: "approved" } : d));
-      toast.success("Deposit approved!");
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed."); }
-    finally { setActionLoading(null); }
-  };
+  
 
-  const handleApproveWithdrawal = async (id: string) => {
-    setActionLoading(id);
-    try {
-      await apiApproveWithdrawal(id);
-      setWithdrawals((p) => p.map((w) => w._id === id ? { ...w, status: "approved" } : w));
-      toast.success("Withdrawal approved!");
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed."); }
-    finally { setActionLoading(null); }
-  };
+  
 
   const pendingDeposits    = deposits.filter((d) => d.status === "pending");
   const pendingWithdrawals = withdrawals.filter((w) => w.status === "pending");

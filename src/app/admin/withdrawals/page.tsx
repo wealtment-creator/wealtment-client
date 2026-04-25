@@ -12,6 +12,8 @@ import { formatUSD } from "@/lib/utils";
 import {
   CheckCircle, Eye, Copy, Search, ArrowUpFromLine, Clock, Filter, Loader,
 } from "lucide-react";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
+
 import toast from "react-hot-toast";
 import type { Withdrawal } from "@/types";
 
@@ -91,6 +93,7 @@ export default function AdminWithdrawalsPage() {
     return matchStatus && matchSearch;
   });
 
+
   const counts: Record<FilterStatus, number> = {
     all:      withdrawals.length,
     pending:  withdrawals.filter((w) => w.status === "pending").length,
@@ -116,7 +119,8 @@ export default function AdminWithdrawalsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="font-display text-2xl sm:text-3xl font-bold flex items-center gap-3">
-              <ArrowUpFromLine className="text-[var(--gold)]" size={24} /> Withdrawal Requests
+              {/* <ArrowUpFromLine className="text-[var(--gold)]" size={24} /> */}
+               Withdrawal Requests
             </h1>
             <p className="text-[var(--muted)] text-sm mt-0.5">Review and approve user withdrawal requests.</p>
           </div>
@@ -165,7 +169,7 @@ export default function AdminWithdrawalsPage() {
           <div className="rounded-2xl border border-[var(--border)] overflow-hidden bg-[var(--bg-card)]">
 
             {/* ── Mobile cards ── */}
-            <div className="md:hidden divide-y divide-[var(--border)]">
+            <div  className="md:hidden  divide-y divide-[var(--border)]">
               {filtered.length === 0 ? (
                 <p className="text-center text-[var(--muted)] text-sm py-14">No requests found.</p>
               ) : filtered.map((w) => {
@@ -216,8 +220,8 @@ const crypto = usd / coinPrice(w.coinType);
             </div>
 
             {/* ── Desktop table ── */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="hidden md:block overflow-x-auto ">
+              <table className="w-full  text-sm">
                 <thead>
                   <tr className="border-b border-[var(--border)] bg-[var(--bg-3)]">
                     {["User", "Coin", "Amount", "USD Value", "Wallet Address", "Date", "Status", "Action"].map((h) => (
@@ -280,6 +284,7 @@ const crypto = usd / coinPrice(w.coinType)
                   })}
                 </tbody>
               </table>
+       
             </div>
           </div>
         )}

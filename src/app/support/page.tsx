@@ -31,7 +31,7 @@ export default function SupportPage() {
   };
 
   const INFO = [
-    { icon: <Mail size={18} />, label: "Email Support", val: "support@elitefinex.com" },
+    { icon: <Mail size={18} />, label: "Email Support", val: "wealtment@gmail.com" },
     { icon: <Clock size={18} />, label: "Support Hours", val: "24/7 — Always Available" },
     { icon: <MapPin size={18} />, label: "Registered Office", val: "United Kingdom" },
     { icon: <Shield size={18} />, label: "Security", val: "256-bit SSL Encrypted" },

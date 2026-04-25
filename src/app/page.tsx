@@ -1,21 +1,24 @@
-
+'use client'
 
 import Image from "next/image";
 import Link from "next/link";
 import { CryptoTicker } from "@/components/ui/CryptoTicker";
 import { SectionTag } from "@/components/ui/SectionTag";
-import { StatCard } from "@/components/ui/StatCard";
-import { PACKAGES, DEPOSITS, WITHDRAWALS, CRYPTO_IMAGES } from "@/lib/data";
+import {  DEPOSITS, WITHDRAWALS, CRYPTO_IMAGES} from "@/lib/data";
 import { formatUSD } from "@/lib/utils";
 import {
   Shield, Zap, Server, Lock, Clock, TrendingUp,
-  ArrowRight, CheckCircle, Users, DollarSign, BarChart2, Globe,
+  ArrowRight,
 
 } from "lucide-react";
 import Package from '../app/plans/components/Package';
-
+import {  useAutoScroll } from "@/hooks/useAutoScroll";
 const FEATURES = [
-  { icon: <Clock size={20} />, title: "24/7 Support", text: "Expert support via email around the clock — always here for you." },
+  { 
+  icon: <Clock size={20} />, 
+  title: "24/7 Support", 
+  text: "Chat with our experts anytime, or reach out via our contact form." 
+},
   { icon: <Server size={20} />, title: "Dedicated Server", text: "Enterprise DDoS protection keeps your funds and data safe at all times." },
   { icon: <Lock size={20} />, title: "256-bit SSL", text: "Extended Validation certificate from Comodo verifies our authenticity." },
   { icon: <Shield size={20} />, title: "UK Registered", text: "Legally registered in England & Wales as Wealtment Limited." },
@@ -30,7 +33,16 @@ const STEPS = [
   { n: "04", title: "Earn & Withdraw", text: "Watch earnings grow and withdraw instantly to your wallet." },
 ];
 
+
 export default function HomePage() {
+  const size = 3;
+const { page } = useAutoScroll(DEPOSITS.length, size);
+
+const visibleItems = DEPOSITS.slice(
+  page * size,
+  page * size + size
+);
+
   return (
     <>
       <CryptoTicker />
@@ -246,12 +258,62 @@ export default function HomePage() {
             <SectionTag>Activity</SectionTag>
             <h2 className="font-display text-4xl font-bold mt-2">Live <span className="text-gold-grad">Transactions</span></h2>
           </div>
-          <div className="grid lg:grid-cols-2 gap-6">
+          <div className="grid  lg:grid-cols-2 gap-6">
             {[
-              { title: "Recent Deposits", items: DEPOSITS, positive: true },
+  { title: "Recent Deposits", items: DEPOSITS, positive: true },
+  { title: "Recent Withdrawals", items: WITHDRAWALS, positive: false },
+].map((col) => {
+  const size = 3;
+
+  // ✅ EACH column gets its own scroll state
+  const { page } = useAutoScroll(col.items.length, 1, 3000);
+
+  const visibleItems = col.items.slice(page, page + size);
+
+  return (
+    <div
+      key={col.title + page}
+      className="glass rounded-2xl overflow-hidden"
+    >
+      {/* HEADER */}
+      <div className="px-5 py-4 border-b border-[var(--border)] flex items-center gap-2">
+        <span className={`w-2 h-2 rounded-full ${col.positive ? "bg-[var(--green)]" : "bg-[var(--gold)]"}`} />
+        <span className="text-xs font-bold tracking-widest uppercase text-[var(--muted)]">
+          {col.title}
+        </span>
+      </div>
+
+      {/* SCROLL AREA */}
+      <div className="h-[180px] overflow-hidden">
+        <div className="animate-scroll-up">
+          {visibleItems.map((d, i) => (
+            <div
+              key={i}
+              className="h-[60px] flex justify-between items-center px-5 border-b border-[var(--border)] last:border-0"
+            >
+              <div>
+                <p className="font-semibold text-sm">{d.name}</p>
+                <p className="text-[10px] text-[var(--muted)] uppercase tracking-widest">
+                  just {col.positive ? "deposited" : "withdrew"}
+                </p>
+              </div>
+
+              <p className={`font-mono font-bold text-sm ${col.positive ? "text-[var(--green)]" : "text-[var(--gold)]"}`}>
+                {col.positive ? "+" : ""}
+                {formatUSD(d.amount)}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+})}
+            {/* {[
+              { title: "Recent Deposits", items: visibleItems, positive: true },
               { title: "Recent Withdrawals", items: WITHDRAWALS, positive: false },
             ].map((col) => (
-              <div key={col.title} className="glass rounded-2xl overflow-hidden">
+              <div key={col.title+page} className="glass rounded-2xl overflow-hidden animate-scroll-up">
                 <div className="px-5 py-4 border-b border-[var(--border)] flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${col.positive ? "bg-[var(--green)]" : "bg-[var(--gold)]"}`} />
                   <span className="text-xs font-bold tracking-widest uppercase text-[var(--muted)]">{col.title}</span>
@@ -268,7 +330,7 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
       </section>

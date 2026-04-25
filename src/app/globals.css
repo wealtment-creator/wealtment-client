@@ -8,29 +8,28 @@
   --font-body:    'DM Sans', sans-serif;
   --font-mono:    'IBM Plex Mono', monospace;
 
-  --bg:       #060d15;
-  --bg-2:     #0b1623;
-  --bg-3:     #101f30;
-  --bg-card:  rgba(11,22,35,0.85);
-  --border:   rgba(255,255,255,0.07);
-  --border-2: rgba(255,255,255,0.13);
+  --bg:       #0a1628;        /* was #060d15 — slightly brighter */
+  --bg-2:     #0f1f35;        /* was #0b1623 */
+  --bg-3:     #162440;        /* was #101f30 */
+  --bg-card:  rgba(15,31,53,0.92);
+  --border:   rgba(255,255,255,0.10);   /* was 0.07 — more visible */
+  --border-2: rgba(255,255,255,0.18);   /* was 0.13 */
 
-  --gold:      #d4a843;
-  --gold-2:    #f0c060;
-  --gold-glow: rgba(212,168,67,0.18);
+  --gold:      #e0b84e;        /* was #d4a843 — slightly brighter */
+  --gold-2:    #f5cc6a;        /* was #f0c060 */
+  --gold-glow: rgba(224,184,78,0.15);
 
   --teal:      #2dd4bf;
   --teal-2:    #5eead4;
-  --teal-glow: rgba(45,212,191,0.18);
+  --teal-glow: rgba(45,212,191,0.15);
 
   --green:  #34d399;
   --red:    #f87171;
 
-  --text:     #e8edf5;
-  --muted:    #64748b;
-  --muted-2:  #94a3b8;
+  --text:     #f0f4fc;        /* was #e8edf5 — brighter white */
+  --muted:    #7a90a8;        /* was #64748b — lighter muted */
+  --muted-2:  #a8bdd0;        /* was #94a3b8 — lighter */
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
@@ -40,6 +39,8 @@ body {
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
+    text-rendering: optimizeLegibility;   /* ADD THIS LINE */
+
 }
 
 ::selection { background: var(--gold-glow); color: var(--gold-2); }
@@ -106,4 +107,17 @@ body {
     linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
   background-size: 60px 60px;
+}
+
+@keyframes scrollUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+.animate-scroll-up {
+  animation: scrollUp 0.5s ease;
 }

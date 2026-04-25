@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -6,14 +7,15 @@ import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { CryptoTicker } from "@/components/ui/CryptoTicker";
 import { getUser } from "@/lib/auth";
-import { apiGetAllDeposits, apiFundUser } from "@/lib/api";
+import { apiGetAllDeposits,  apiApproveDeposit } from "@/lib/api";
 import { COIN_PRICES } from "@/lib/data";
 import { formatUSD } from "@/lib/utils";
 import {
-  CheckCircle, Eye, Search, ArrowDownToLine, Clock, Filter, Loader, DollarSign,
+  CheckCircle, Eye, Search, Clock, Filter, Loader, DollarSign,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import type { Deposit, Withdrawal } from "@/types";
+
+import type { Deposit } from "@/types";
 
 type FilterStatus = "all" | "pending" | "approved" | "rejected";
 
@@ -52,7 +54,6 @@ export default function AdminDepositsPage() {
   const [fundAmount,setFundAmount]= useState("");
   const [loading,   setLoading]   = useState(true);
   const [actionId,  setActionId]  = useState<string | null>(null);
-console.log('depo',deposits)
   const fetchData = useCallback(async () => {
     const u = getUser();
     if (!u) { router.replace("/login"); return; }
@@ -72,7 +73,7 @@ console.log('depo',deposits)
     setFundAmount(String(d.amount));
   };
 
-  const handleFundUser = async () => {
+   const handleFundUser = async () => {
     if (!viewModal) return;
     const amt = parseFloat(fundAmount);
     if (!amt || amt <= 0) { toast.error("Enter a valid amount."); return; }
@@ -81,12 +82,10 @@ console.log('depo',deposits)
     setActionId(viewModal._id);
     try {
       // PUT /admin/fund-user/:userId  body: { amount }
-    await apiFundUser(uid, amt);
+      await apiApproveDeposit(viewModal._id);
       setDeposits((p) => p.map((x) => x._id === viewModal._id ? { ...x, status: "approved" } : x));
       setViewModal(null);
-      // toast.success(`${userName(viewModal)} funded with ${amt} ${coinLabel(viewModal.coinType)}!`);
-            toast.success(`${userName(viewModal)} funded with ${amt} ${`$`}!`);
-
+      toast.success(`${userName(viewModal)} funded with ${amt} ${`$`}!`);
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : "Fund failed.");
     } finally { setActionId(null); }
@@ -102,6 +101,7 @@ console.log('depo',deposits)
       d._id.toLowerCase().includes(q);
     return matchStatus && matchSearch;
   });
+    const ROWS = 2; // how many to show at once
 
   const counts: Record<FilterStatus, number> = {
     all:      deposits.length,
@@ -125,13 +125,17 @@ console.log('depo',deposits)
       <div className="p-4 sm:p-6 lg:p-8 space-y-6">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
+        <div >
+           
+         <div   className="flex mb-2  flex-col sm:flex-row sm:items-center justify-between gap-3">
+             <div>
             <h1 className="font-display text-2xl sm:text-3xl font-bold flex items-center gap-3">
-              <ArrowDownToLine className="text-[var(--gold)]" size={24} /> Deposit Requests
+              {/* <ArrowDownToLine className="text-[var(--gold)]" size={24} /> */}
+               Deposit Requests
             </h1>
             <p className="text-[var(--muted)] text-sm mt-0.5">Review and fund user deposit requests.</p>
           </div>
+         </div>
 
           
           {counts.pending > 0 && (
@@ -195,10 +199,10 @@ console.log('depo',deposits)
            <div className="rounded-2xl w-full border border-[var(--border)] overflow-hidden bg-[var(--bg-card)]">
           
                       {/* ── Mobile cards ── */}
-                      <div className="md:hidden divide-y divide-[var(--border)]">
+                      <div  className="md:hidden  divide-y divide-[var(--border)]">
                         {filtered.length === 0 ? (
                           <p className="text-center text-[var(--muted)] text-sm py-14">No deposits found.</p>
-                        ) : filtered.map((d) => {
+                        ) :  filtered.map((d) => {
                          const usd = d.amount; 
           const crypto = usd / coinPrice(d.coinType);
                           return (
@@ -237,8 +241,9 @@ console.log('depo',deposits)
                       </div>
           
                       {/* ── Desktop table ── */}
-                      <div className="hidden md:block overflow-x-auto">
-                        <table className="w-full text-sm">
+                      <div className="hidden  md:block overflow-x-auto overflow-hidden h-[200px]">
+                        <table   className="w-full text-sm 
+    ">
                           <thead>
                             <tr className="border-b border-[var(--border)] bg-[var(--bg-3)]">
                               {["User", "Coin", "Amount", "Coin Value", "Date", "Status", "Action"].map((h) => (
@@ -299,6 +304,7 @@ console.log('depo',deposits)
                             })}
                           </tbody>
                         </table>
+                   
                       </div>
                     </div>
         )}
@@ -403,3 +409,4 @@ console.log('depo',deposits)
     </DashLayout>
   );
 }
+

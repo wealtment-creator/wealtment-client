@@ -83,7 +83,7 @@ export const apiGetAllDeposits = () =>
   endpointRoute.get("/deposits").then((r) => r.data);
 
 export const apiApproveDeposit = (id: string) =>
-  endpointRoute.put(`/deposit/approve/${id}`).then((r) => r.data);
+  endpointRoute.put(`/deposits/approve/${id}`).then((r) => r.data);
 // profile
 export const apiChangePassword = (body: { currentPassword: string; newPassword: string }) =>
   endpointRoute.put("/user/change-password", body).then((r) => r.data);
@@ -121,3 +121,15 @@ export const apiTransferReferral = (amount: string) =>
 // apiFundUser(id, amount) → PUT /admin/fund-user/:id body { amount }
 // apiApproveWithdrawal(id) → now correctly hits PUT /withdrawals/approve/:id
 // apiRequestWithdrawal and apiCreateDeposit now send coinType: "bitcoin" | "litecoin" (matching what the API expects)
+
+export const apiDeductUser = (id: string, amount: number) =>
+  endpointRoute.put(`/admin/deduct/${id}`, { amount }).then((r) => r.data);
+
+
+// Email: send to ALL users
+export const apiEmailAll = (subject: string, message: string) =>
+  endpointRoute.post("/email/send/all", { subject, message }).then((r) => r.data);
+
+// Email: send to SELECTED users
+export const apiEmailSelected = (userIds: string[], subject: string, message: string) =>
+  endpointRoute.post("/email/send/selected", { userIds, subject, message }).then((r) => r.data);
