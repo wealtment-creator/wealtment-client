@@ -30,7 +30,7 @@ export default function AboutPage() {
               Welcome to <span className="text-gold-grad">Wealtment Limited</span>
             </h1>
             <p className="text-lg text-gray-200 leading-relaxed mb-5">
-             Wealtment Limited is a true opportunity to earn on Forex Trading. Nowadays Forex Trading is one of the main payment instruments which can be used online — and we&apos;ve been using digital assets to gain and raise profit since 17th February 2021
+             Wealtment Limited is a true opportunity to earn on Forex Trading. Nowadays Forex Trading is one of the main payment instruments which can be used online — and we&apos;ve been using digital assets to gain and raise profit since 17th February 2019 
             </p>
             <p className="text-lg text-gray-200 leading-relaxed mb-5">
               We are an officially registered company which gives our clients all required guarantees, including full confidentiality of data provided during registration. We guarantee payment accruals in due time and full amounts.

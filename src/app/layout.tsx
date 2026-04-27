@@ -42,6 +42,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { ConditionalShell } from "@/components/layout/ConditionalShell";
 import { Toaster } from "react-hot-toast";
+// import { useInactivityLogout } from "@/hooks/useInactivityLogout";
 
 export const metadata: Metadata = {
   title: "Wealtment Limited – Professional Forex & Crypto Trading",
@@ -54,6 +55,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+    
+
   return (
     <html lang="en">
       <head>

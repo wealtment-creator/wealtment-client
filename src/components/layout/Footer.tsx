@@ -47,7 +47,7 @@ export function Footer() {
               <span className="font-display font-bold text-base tracking-wider text-gold-grad">WEALTMENT</span>
             </Link>
             <p className="text-sm text-[var(--muted)] leading-relaxed max-w-xs">
-              Professional Forex & cryptocurrency trading platform. UK registered company providing secure, profitable investment solutions since 17th February 2021
+              Professional Forex & cryptocurrency trading platform. UK registered company providing secure, profitable investment solutions since 17th February 2019 
             </p>
             <div className="flex gap-2 mt-6">
               {[Shield, Lock, Award].map((Icon, i) => (

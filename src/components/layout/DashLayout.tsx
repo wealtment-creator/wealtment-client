@@ -32,8 +32,12 @@ const ADMIN_NAV: NavItem[] = [
   { label: "Packages",            href: "/admin/packages",    icon: <Package size={16} /> },
   { label: "Withdrawal Requests", href: "/admin/withdrawals", icon: <History size={16} /> },
   { label: "Deposit Requests",    href: "/admin/deposits",    icon: <ArrowDownToLine size={16} /> },
+    { label: "Investments", href: "/admin/investments", icon: <TrendingUp size={16} /> },
+    
+  { label: "Messages", href: "/admin/messages", icon: <Mail size={16} />},
+
   { label: "Profile",             href: "/admin/profile",     icon: <Settings size={16} /> },
-  { label: "Messages", href: "/admin/messages", icon: <Mail size={16} /> },
+ 
 ];
 
 interface Props { children: React.ReactNode; variant: "user" | "admin"; }

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Package from '../app/plans/components/Package';
 import {  useAutoScroll } from "@/hooks/useAutoScroll";
+import { useState } from "react";
 const FEATURES = [
   { 
   icon: <Clock size={20} />, 
@@ -33,8 +34,8 @@ const STEPS = [
   { n: "04", title: "Earn & Withdraw", text: "Watch earnings grow and withdraw instantly to your wallet." },
 ];
 
-
 export default function HomePage() {
+const [open, setOpen] = useState(false);
 
 
 
@@ -43,13 +44,14 @@ export default function HomePage() {
       <CryptoTicker />
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
-      <section className="relative min-h-[92vh] flex items-center pt-16 overflow-hidden">
+      <section className="relative min-h-auto lg:min-h-[92vh] flex items-start lg:items-center pt-6 lg:pt-16 overflow-hidden">
+      {/* <section className="relative min-h-[92vh] flex items-center pt-0 overflow-hidden md:pt-16"> */}
         {/* Background layers */}
         <div className="absolute inset-0 bg-[var(--bg)] grid-pattern" />
         <div className="absolute inset-0 bg-gradient-radial from-[rgba(212,168,67,0.07)] via-transparent to-transparent" style={{ backgroundPosition: "60% 40%" }} />
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[var(--teal-glow)] blur-[120px] opacity-20 pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full py-20 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full  grid lg:grid-cols-2 gap-16 items-center md:py-20">
           {/* Left */}
           <div className="anim-slide">
             <div className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[2px] uppercase text-[var(--gold)] mb-6 px-3 py-1.5 rounded-full border border-[var(--gold-glow)] bg-[var(--gold-glow)]">
@@ -184,6 +186,62 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+{open && (
+  <div
+    className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+    onClick={() => setOpen(false)}
+  >
+    <div className="relative w-full max-w-5xl h-[80vh]">
+      <Image
+        src="https://i.postimg.cc/3RdjcnZV/Whats-App-Image-2026-04-27-at-10-39-13.jpg"
+        alt="Verification Certificate"
+        fill
+        className="object-contain"
+      />
+    </div>
+
+    {/* Close hint */}
+    <span className="absolute top-6 right-6 text-white text-sm opacity-70">
+      Click anywhere to close
+    </span>
+  </div>
+)}
+      <section   onClick={() => setOpen(true)}
+ className="border-y border-[var(--border)] py-16 px-4 sm:px-6 bg-[var(--bg-2)]">
+  <div className="max-w-5xl mx-auto text-center space-y-6">
+
+    {/* Title */}
+    <div>
+      <p className="text-[10px] tracking-[2px] uppercase text-[var(--gold)] font-bold mb-2">
+        Trust & Compliance
+      </p>
+      <h2 className="font-display text-3xl sm:text-4xl font-bold">
+        We Are <span className="text-gold-grad">Verified</span>
+      </h2>
+      <p className="text-[var(--muted-2)] text-sm mt-2 max-w-md mx-auto">
+        Officially registered and verified, ensuring transparency, security, and trust for all investors.
+      </p>
+    </div>
+
+    {/* Certificate Image */}
+    <div className="relative mx-auto w-full max-w-3xl h-[320px] sm:h-[420px] rounded-2xl overflow-hidden border border-[var(--border)] shadow-xl bg-white p-2">
+      <Image
+        src="https://i.postimg.cc/3RdjcnZV/Whats-App-Image-2026-04-27-at-10-39-13.jpg"
+        alt="Verification Certificate"
+        fill
+        className="object-contain bg-white"
+      />
+    </div>
+
+    {/* Optional badge row */}
+    <div className="flex justify-center gap-6 pt-4 text-xs text-[var(--muted)]">
+      <span>✔ Registered Company</span>
+      <span>✔ Verified Identity</span>
+      <span>✔ Secure Platform</span>
+    </div>
+
+  </div>
+</section>
 
     
 
@@ -193,7 +251,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-transparent to-[var(--bg)]" />
         <div className="absolute inset-0 flex items-center justify-center text-center px-4">
           <div>
-            <h2 className="font-display text-4xl font-black text-gold-grad mb-4">17th February 2021 </h2>
+            <h2 className="font-display text-4xl font-black text-gold-grad mb-4">17th February2019 </h2>
             <p className="text-lg text-gray-200">Founded &amp; Trading Every Day Since</p>
           </div>
         </div>

@@ -42,7 +42,6 @@ export default function UserDashboardPage() {
     // Fetch balance
     apiGetBalance()
       .then((res) => {
-        console.log('balance response', res);
         setBalance(res.balance ?? 0);
       })
       .catch(() => {});
@@ -180,7 +179,7 @@ const portfolioBalance = useMemo(() => usdBalance, [usdBalance]);
 
             {/* Investment balance */}
             {balance > 0 && (
-              <div className="mt-3 flex items-center gap-3 bg-[var(--gold-glow)] border border-[rgba(212,168,67,0.2)] rounded-xl p-4">
+              <div className="mt-3 overflow-x-scroll  flex items-center gap-3 bg-[var(--gold-glow)] border border-[rgba(212,168,67,0.2)] rounded-xl p-4 md:overflow-x-hidden">
                 <div className="w-10 h-10 rounded-full bg-[var(--gold-glow)] flex items-center justify-center shrink-0"><TrendingUp size={18} className="text-[var(--gold)]"/></div>
                 <div className="flex-1"><p className="text-[10px] font-bold tracking-widest uppercase text-[var(--muted)]">Total Balance</p><p className="font-mono font-bold text-base text-[var(--gold)] mt-0.5">{formatUSD(portfolioBalance)}</p></div>
                 <div className="text-right shrink-0"><p className="text-[10px] text-[var(--muted)] uppercase">BTC</p><p className="font-mono font-bold text-sm text-[var(--green)]">{btcBalance.toFixed(6)} BTC</p></div>

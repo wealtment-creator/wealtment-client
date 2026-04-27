@@ -6,7 +6,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { CryptoTicker } from "@/components/ui/CryptoTicker";
 import { getUser } from "@/lib/auth";
-import { apiGetPlans, apiInvest, apiGetMyInvestments, apiGetCryptoPrices } from "@/lib/api";
+import { apiGetPlans, apiInvest, apiGetMyInvestments, apiGetCryptoPrices,apiGetBalance } from "@/lib/api";
 import { DEPOSIT_ADDRESSES } from "@/lib/data";
 import { formatUSD, formatCoinPrice } from "@/lib/utils";
 import { Copy, CheckCircle, Package, Info, Loader } from "lucide-react";
@@ -26,7 +26,7 @@ export default function UserPackagesPage() {
   const [sending,     setSending]     = useState(false);
   const [loadingPlans,setLoadingPlans]= useState(true);
   const [prices,      setPrices]      = useState<{bitcoin: {usd: number}, litecoin: {usd: number}} | null>(null);
-
+const [balance,      setBalance]      = useState(0)
   const load = async (u: User) => {
     try {
       const [pr, ir] = await Promise.all([apiGetPlans(), apiGetMyInvestments()]);
@@ -52,34 +52,125 @@ export default function UserPackagesPage() {
     apiGetCryptoPrices().then(setPrices).catch(() => setPrices(null));
   }, [router]);
 
+  useEffect(() => {
+      // Fetch balance
+      apiGetBalance()
+        .then((res) => {
+          console.log('balance response', res);
+          setBalance(res.balance ?? 0);
+        })
+        .catch(() => {});
+    }, []);
   const copy = (addr: string) => {
     navigator.clipboard.writeText(addr).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2500); toast.success("Copied!"); });
   };
 
+  // const handleInvest = async () => {
+  //   if (!selected || !amount || Number(amount) <= 0) { toast.error("Enter a valid amount."); return; }
+
+  //   const min = selected.minAmount ?? selected.min ?? 0;
+  //   if (Number(amount) < min) { toast.error(`Minimum is ${formatUSD(min)}`); return; }
+  //   setSending(true);
+  //           if (  Number(amount) > balance|| balance<min ) { toast.error("Insufficient balance."); return; }
+
+  //   try {
+  //     await apiInvest(selected._id? selected._id : '', Number(amount));
+  //     console.log(selected._id, Number(amount));
+  //     const ir = await apiGetMyInvestments();
+  //     const investmentsData = Array.isArray(ir)
+  //       ? ir
+  //       : ir.investments ?? ir.data ?? [];
+  //     setInvestments(investmentsData);
+  //     setSelected(null);
+  //     setAmount("");
+  //     await Swal.fire({
+  //       title: "🎉 Investment Created!",
+  //       html: `<p style="color:#94a3b8;margin-top:8px">Invested <strong style="color:#d4a843">${formatUSD(Number(amount))}</strong> in <strong style="color:#d4a843">${selected.name}</strong>. Send your deposit to the address shown and it activates within 24h.</p>`,
+  //       icon: "success", background: "#0b1623", color: "#e8edf5", confirmButtonColor: "#d4a843", confirmButtonText: "Got it!",
+  //     });
+  //   } catch (err: unknown) {
+  //     toast.error(err instanceof Error ? err.message : "Investment failed.");
+  //   } finally { setSending(false); }
+  // };
   const handleInvest = async () => {
-    if (!selected || !amount || Number(amount) <= 0) { toast.error("Enter a valid amount."); return; }
-    const min = selected.minAmount ?? selected.min ?? 0;
-    if (Number(amount) < min) { toast.error(`Minimum is ${formatUSD(min)}`); return; }
-    setSending(true);
-    try {
-      await apiInvest(selected._id? selected._id : '', Number(amount));
-      console.log(selected._id, Number(amount));
-      const ir = await apiGetMyInvestments();
-      const investmentsData = Array.isArray(ir)
-        ? ir
-        : ir.investments ?? ir.data ?? [];
-      setInvestments(investmentsData);
-      setSelected(null);
-      setAmount("");
-      await Swal.fire({
-        title: "🎉 Investment Created!",
-        html: `<p style="color:#94a3b8;margin-top:8px">Invested <strong style="color:#d4a843">${formatUSD(Number(amount))}</strong> in <strong style="color:#d4a843">${selected.name}</strong>. Send your deposit to the address shown and it activates within 24h.</p>`,
-        icon: "success", background: "#0b1623", color: "#e8edf5", confirmButtonColor: "#d4a843", confirmButtonText: "Got it!",
-      });
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Investment failed.");
-    } finally { setSending(false); }
-  };
+  if (!selected) return;
+
+  const amt = Number(amount);
+  const min = selected.
+minimumDeposit ?? selected.
+minimumDeposit ?? 0;
+
+const max =
+  selected.
+maximumDeposit ??
+  selected.
+maximumDeposit ??
+  selected.
+maximumDeposit ??
+  null;
+
+  // ❌ invalid input
+  if (!amt || amt <= 0) {
+    toast.error("Enter a valid amount.");
+    return;
+  }
+
+  // ❌ less than plan minimum
+  if (amt < min) {
+    toast.error(`Minimum investment is ${formatUSD(min)}`);
+    return;
+  }
+  // ❌ greater than plan maximum
+if (max && amt > max) {
+  toast.error(`Maximum investment is ${formatUSD(max)}`);
+  return;
+}
+
+  // ❌ user balance less than plan minimum
+  if (balance < min) {
+    toast.error("Your balance is too low for this plan.");
+    return;
+  }
+
+  // ❌ user balance less than entered amount
+  if (amt > balance) {
+    toast.error("Insufficient balance.");
+    return;
+  }
+
+  // ✅ only now start loading
+  setSending(true);
+
+  try {
+    await apiInvest(selected._id ? selected._id : "", amt);
+
+    const ir = await apiGetMyInvestments();
+    const investmentsData = Array.isArray(ir)
+      ? ir
+      : ir.investments ?? ir.data ?? [];
+
+    setInvestments(investmentsData);
+    setSelected(null);
+    setAmount("");
+
+    await Swal.fire({
+      title: "🎉 Investment Created!",
+      html: `<p style="color:#94a3b8;margin-top:8px">
+        Invested <strong style="color:#d4a843">${formatUSD(amt)}</strong> 
+        in <strong style="color:#d4a843">${selected.name}</strong>.
+      </p>`,
+      icon: "success",
+      background: "#0b1623",
+      color: "#e8edf5",
+      confirmButtonColor: "#d4a843",
+    });
+
+  } catch (err: unknown) {
+    toast.error(err instanceof Error ? err.message : "Investment failed.");
+  } finally {
+    setSending(false);
+  }
+};
 
   if (!user) return null;
 

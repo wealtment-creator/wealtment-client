@@ -8,7 +8,7 @@ import { DashLayout } from "@/components/layout/DashLayout";
 import { CryptoTicker } from "@/components/ui/CryptoTicker";
 import { Modal } from "@/components/ui/Modal";
 import { getUser } from "@/lib/auth";
-import { apiGetAllUsers, apiFundUser, apiDeductUser, apiEmailAll, apiEmailSelected } from "@/lib/api";
+import { apiGetAllUsers, apiFundUser, apiDeductUser, apiEmailAll, apiEmailSelected ,apiEditUser} from "@/lib/api";
 import { formatUSD } from "@/lib/utils";
 import {
   Search, Users, Loader, CheckCircle, TrendingUp, Shield,
@@ -31,8 +31,9 @@ interface AdminUserRow {
   createdAt: string;
 }
 
-type ModalType = "fund" | "deduct" | "email-all" | "email-selected" | null;
+// type ModalType = "fund" | "deduct" | "email-all" | "email-selected" | null;
 
+type ModalType = "fund" | "deduct" | "email-all" | "email-selected" | "edit" | null;
 const PAGE_SIZE = 10;
 
 function fmtDate(iso: string) {
@@ -59,6 +60,53 @@ export default function AdminUsersPage() {
   const [emailSearch,  setEmailSearch]  = useState("");
   const [sending,      setSending]      = useState(false);
 
+  const [editName, setEditName] = useState("");
+const [editEmail, setEditEmail] = useState("");
+const [editBTC, setEditBTC] = useState("");
+const [editLTC, setEditLTC] = useState("");
+
+
+const openEdit = (u: AdminUserRow) => {
+  setSelectedUser(u);
+  setEditName(u.name || "");
+  setEditEmail(u.email || "");
+  setEditBTC(u.bitcoinAddress || "");
+  setEditLTC(u.litecoinAddress || "");
+  setModal("edit");
+};
+const handleEditUser = async () => {
+  if (!selectedUser) return;
+
+  try {
+    await apiEditUser(
+      selectedUser._id,
+      editName,
+      editEmail,
+      editBTC,
+      editLTC
+    );
+
+    // update UI instantly
+    setUsers((prev) =>
+      prev.map((u) =>
+        u._id === selectedUser._id
+          ? {
+              ...u,
+              name: editName,
+              email: editEmail,
+              bitcoinAddress: editBTC,
+              litecoinAddress: editLTC,
+            }
+          : u
+      )
+    );
+
+    toast.success("User updated successfully");
+    closeModal();
+  } catch (e: unknown) {
+    toast.error(e instanceof Error ? e.message : "Failed to update user");
+  }
+};
   const fetchData = useCallback(async () => {
     const u = getUser();
     if (!u) { router.replace("/login"); return; }
@@ -270,6 +318,12 @@ console.log('selectedUser',selectedUser)
                     <button onClick={() => openDeduct(u)} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(248,113,113,0.3)] text-[var(--red)] bg-[rgba(248,113,113,0.06)] hover:bg-[rgba(248,113,113,0.14)] transition-colors">
                       <MinusCircle size={12} /> Deduct
                     </button>
+                    <button
+  onClick={() => openEdit(u)}
+  className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-[var(--teal)] bg-[var(--teal-glow)] hover:opacity-80 transition-colors"
+>
+  Edit
+</button>
                   </div>
                   <p className="text-xs text-[var(--muted)]">Joined {fmtDate(u.createdAt)}</p>
                 </div>
@@ -326,6 +380,12 @@ console.log('selectedUser',selectedUser)
                             className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[rgba(248,113,113,0.3)] text-[var(--red)] bg-[rgba(248,113,113,0.06)] hover:bg-[rgba(248,113,113,0.14)] transition-colors flex items-center gap-1">
                             <MinusCircle size={10} /> Deduct
                           </button>
+                          <button
+  onClick={() => openEdit(u)}
+  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[var(--teal)] text-[var(--teal)] bg-[var(--teal-glow)]"
+>
+  Edit
+</button>
                         </div>
                       </td>
                     </tr>
@@ -417,7 +477,53 @@ console.log('selectedUser',selectedUser)
           </button>
         </div>
       </Modal>
+<Modal
+  open={modal === "edit"}
+  onClose={closeModal}
+  title={`Edit ${selectedUser?.name ?? "User"}`}
+>
+  <div className="space-y-4 mt-2">
 
+    <input
+      type="text"
+      placeholder="Name"
+      value={editName}
+      onChange={(e) => setEditName(e.target.value)}
+      className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)]"
+    />
+
+    <input
+      type="email"
+      placeholder="Email"
+      value={editEmail}
+      onChange={(e) => setEditEmail(e.target.value)}
+      className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)]"
+    />
+
+    <input
+      type="text"
+      placeholder="Bitcoin Address"
+      value={editBTC}
+      onChange={(e) => setEditBTC(e.target.value)}
+      className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)]"
+    />
+
+    <input
+      type="text"
+      placeholder="Litecoin Address"
+      value={editLTC}
+      onChange={(e) => setEditLTC(e.target.value)}
+      className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)]"
+    />
+
+    <button
+      onClick={handleEditUser}
+      className="w-full py-3 rounded-xl bg-[var(--teal)] text-black font-bold"
+    >
+      Save Changes
+    </button>
+  </div>
+</Modal>
       {/* ── Email All Modal ── */}
       <Modal open={modal === "email-all"} onClose={closeModal} title="Email All Users" subtitle={`Will be sent to all ${users.length} users`}>
         <div className="space-y-4 mt-2">
