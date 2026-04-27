@@ -133,3 +133,8 @@ export const apiEmailAll = (subject: string, message: string) =>
 // Email: send to SELECTED users
 export const apiEmailSelected = (userIds: string[], subject: string, message: string) =>
   endpointRoute.post("/email/send/selected", { userIds, subject, message }).then((r) => r.data);
+
+// editusers info
+
+export const apiEditUser = (id: string, name: string, email: string,bitcoinAddress:string, litecoinAddress:string) =>
+  endpointRoute.put(`/admin/users/${id}`, { name, email, bitcoinAddress, litecoinAddress }).then((r) => r.data);
