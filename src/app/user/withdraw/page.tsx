@@ -247,7 +247,6 @@ export default function WithdrawPage() {
   const [amount, setAmount] = useState(""); // USD
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
   useEffect(() => {
     apiGetProfile()
       .then((res) => {
@@ -300,7 +299,7 @@ export default function WithdrawPage() {
       return;
     }
 
-    if (coinAmt > bal) {
+    if (Number(amount) > user.balance) {
       toast.error("Insufficient balance");
       return;
     }

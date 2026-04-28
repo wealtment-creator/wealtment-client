@@ -46,12 +46,12 @@ export default function ReferralsPage() {
   const [transferAmt,  setTransferAmt]  = useState("");
   const [transferring, setTransferring] = useState(false);
   const [copied,       setCopied]       = useState(false);
-
+console.log('referrals data', data)
   // Build referral link from logged-in user id
   const user = getUser();
   const referralLink =
     typeof window !== "undefined" && user
-      ? `${window.location.origin}/signup?ref=${user._id}`
+      ? `${window.location.origin}/signup?ref=${user.name}`
       : "";
 
   const load = async () => {

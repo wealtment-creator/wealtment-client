@@ -129,7 +129,7 @@ updatedAt
                 <div key={p._id} className="relative rounded-2xl p-5 border border-[var(--border)] bg-[var(--bg-card)] flex flex-col transition-all hover:-translate-y-1">
                   <p className="text-[10px] font-bold tracking-[2px] uppercase text-[var(--muted)] mb-2">{p.name}</p>
                   <p className="font-display text-4xl font-black text-[var(--gold)] mb-1"> <span className="text-xs">ROI</span>  {rate(p)}%</p>
-                  <p className="text-xs text-[var(--muted)] mt-0.5 mb-4">After  {p.duration} day(s)</p>
+                  <p className="text-xs text-[var(--muted)] mt-0.5 mb-4">After  {p.duration} hour(s)</p>
                   <div className="space-y-1.5 flex-1 text-xs">
                     <div className="flex justify-between"><span className="text-[var(--muted)]">Min</span><span>${(minAmt(p))}</span></div>
                     <div className="flex justify-between"><span className="text-[var(--muted)]">Max</span><span>${maxAmt(p) ? (maxAmt(p)!) : "Unlimited"}</span></div>
@@ -182,7 +182,7 @@ updatedAt
                       <tr key={p._id} className="border-b border-[var(--border)] hover:bg-[var(--bg-3)] last:border-0 transition-colors">
                         <td className="px-5 py-4 font-bold text-[var(--gold)]">{p.name}</td>
                         <td className="px-5 py-4 font-mono text-[var(--green)]">{rate(p)}%</td>
-                        <td className="px-5 py-4">{p.duration}</td>
+                        <td className="px-5 py-4">{p.duration} hour(s)</td>
                         <td className="px-5 py-4 font-mono">{(minAmt(p))}</td>
                         <td className="px-5 py-4 font-mono">{maxAmt(p) ?(maxAmt(p)!) : "Unlimited"}</td>
                         <td className="px-5 py-4"><Badge variant={p.featured ? "yellow" : "muted"}>{p.featured ? "Yes" : "No"}</Badge></td>
@@ -208,7 +208,7 @@ updatedAt
           <Input label="Plan Name *" placeholder="e.g. DIAMOND" value={form.name ?? ""} onChange={(e) => setForm({ ...form, name: e.target.value.toUpperCase() })} />
           <div className="grid grid-cols-2 gap-3">
             <Input label="ROI % *" type="number" min="1" placeholder="e.g. 50" value={form.returnRate ?? form.pct ?? ""} onChange={(e) => setForm({ ...form, returnRate: Number(e.target.value), pct: Number(e.target.value) })} />
-            <Input label="Duration (Days) *" type="number" min="1" placeholder="e.g. 3" value={form.days ?? ""} onChange={(e) => setForm({ ...form, days: Number(e.target.value) })} />
+            <Input label="Duration (hours) *" type="number" min="1" placeholder="e.g. 3" value={form.days ?? ""} onChange={(e) => setForm({ ...form, days: Number(e.target.value) })} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Input label="Min Amount *" type="number" min="1" placeholder="e.g. 100" value={form.minAmount ?? form.min ?? ""} onChange={(e) => setForm({ ...form, minAmount: Number(e.target.value), min: Number(e.target.value) })} />

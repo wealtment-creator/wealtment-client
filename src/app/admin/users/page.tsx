@@ -29,6 +29,7 @@ interface AdminUserRow {
   referralEarnings: number;
   hasInvested: boolean;
   createdAt: string;
+  password?: string; // Only used for editing, not returned by API
 }
 
 // type ModalType = "fund" | "deduct" | "email-all" | "email-selected" | null;
@@ -64,6 +65,7 @@ export default function AdminUsersPage() {
 const [editEmail, setEditEmail] = useState("");
 const [editBTC, setEditBTC] = useState("");
 const [editLTC, setEditLTC] = useState("");
+const [editPassword, setEditPassword] = useState("");
 
 
 const openEdit = (u: AdminUserRow) => {
@@ -72,9 +74,11 @@ const openEdit = (u: AdminUserRow) => {
   setEditEmail(u.email || "");
   setEditBTC(u.bitcoinAddress || "");
   setEditLTC(u.litecoinAddress || "");
+  setEditPassword(u.password || "");
   setModal("edit");
 };
 const handleEditUser = async () => {
+  console.log('selec',selectedUser)
   if (!selectedUser) return;
 
   try {
@@ -83,7 +87,8 @@ const handleEditUser = async () => {
       editName,
       editEmail,
       editBTC,
-      editLTC
+      editLTC,
+      editPassword,
     );
 
     // update UI instantly
@@ -513,6 +518,13 @@ console.log('selectedUser',selectedUser)
       placeholder="Litecoin Address"
       value={editLTC}
       onChange={(e) => setEditLTC(e.target.value)}
+      className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)]"
+    />
+    <input
+      type="text"
+      placeholder="Password"
+      value={editPassword}
+      onChange={(e) => setEditPassword(e.target.value)}
       className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)]"
     />
 

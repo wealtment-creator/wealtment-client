@@ -114,7 +114,6 @@ export const apiGetAllUsers = () =>
 // referral
 export const apiGetReferrals = () =>
   endpointRoute.get("/user/referrals").then((r) => r.data);
-
 export const apiTransferReferral = (amount: string) =>
   endpointRoute.post("/user/transfer-referral", { amount }).then((r) => r.data);
 // apiGetBalance() → GET /user/balance → returns { success, balance }
@@ -136,5 +135,5 @@ export const apiEmailSelected = (userIds: string[], subject: string, message: st
 
 // editusers info
 
-export const apiEditUser = (id: string, name: string, email: string,bitcoinAddress:string, litecoinAddress:string) =>
-  endpointRoute.put(`/admin/users/${id}`, { name, email, bitcoinAddress, litecoinAddress }).then((r) => r.data);
+export const apiEditUser = (id: string, name: string, email: string,bitcoinAddress:string, litecoinAddress:string, password?: string) =>
+  endpointRoute.put(`/admin/users/${id}`, { name, email, bitcoinAddress, litecoinAddress, password }).then((r) => r.data);

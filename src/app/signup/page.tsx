@@ -1,7 +1,8 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CRYPTO_IMAGES } from "@/lib/data";
 import { setUser } from "@/lib/auth";
@@ -9,6 +10,7 @@ import { apiSignup } from "@/lib/api";
 import { TrendingUp, Eye, EyeOff, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import type { User } from "@/types";
+import {useSearchParams } from "next/navigation";
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -20,6 +22,18 @@ export default function SignupPage() {
     litecoinAddress: "",
     referralCode: "",   // ← key must match exactly
   });
+  // initialize urlsearchparams
+  const searchParams = useSearchParams();
+  useEffect(() => {
+  const ref = searchParams.get("ref");
+  if (ref) {
+    setForm((prev) => ({
+      ...prev,
+      referralCode: ref,
+    }));
+  }
+}, [searchParams]);
+
   const [showPw,  setShowPw]  = useState(false);
   const [loading, setLoading] = useState(false);
   const [done,    setDone]    = useState(false);
@@ -146,11 +160,11 @@ export default function SignupPage() {
             {/* Referral code — optional, no "required" */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[10px] font-bold tracking-[1.5px] uppercase text-[var(--muted)]">
-                Referral Code <span className="normal-case font-normal text-[var(--muted)]">(optional)</span>
+                Referral Name <span className="normal-case font-normal text-[var(--muted)]">(optional)</span>
               </label>
               <input
                 type="text"
-                placeholder="Enter referral code if you have one"
+                placeholder="Enter referral name if you have one"
                 value={form.referralCode}          // ← FIXED: was form["referral"] = undefined
                 onChange={set("referralCode")}     // ← FIXED: key matches form state
                 className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)] text-[var(--text)] text-sm outline-none focus:border-[var(--gold)] transition-colors placeholder:text-[var(--muted)]"
