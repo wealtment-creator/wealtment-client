@@ -11,6 +11,7 @@ export function getUser(): User | null {
     const u: User = JSON.parse(raw);
     if (!u.token) return null;
     u.btcBalance  = u.btcBalance  ?? 0;
+    u.name       = u.name       ?? "Unknown";
     u.ltcBalance  = u.ltcBalance  ?? 0;
     u.balance     = u.balance     ?? 0;
     u.isAdmin     = u.isAdmin     ?? u.role === "admin";

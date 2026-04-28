@@ -179,7 +179,7 @@ if (max && amt > max) {
   const maxAmt = (p: Plan) => p.maximumDeposit ?? p.maxAmount ?? p.max ?? null;
   const durationLabel = (p: Plan) => {
     if (typeof p.duration === "string") return p.duration;
-    if (typeof p.duration === "number") return `${p.duration} days`;
+    if (typeof p.duration === "number") return `${p.duration} hour(s)`;
     if (p.days != null) return `${p.days}d`;
     return "—";
   };
