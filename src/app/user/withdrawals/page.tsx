@@ -29,8 +29,9 @@ interface MyWithdrawal {
 function coinLabel(ct: string) { return ct === "bitcoin" ? "BTC" : "LTC"; }
 function coinIcon(ct: string)  { return ct === "bitcoin" ? "₿" : "Ł"; }
 function coinColor(ct: string) { return ct === "bitcoin" ? "#F7931A" : "#345D9D"; }
-function usdValue(amount: number, ct: string) {
-  return amount * (ct === "bitcoin" ? COIN_PRICES.BTC : COIN_PRICES.LTC);
+function usdValue(amount: number) {
+  return amount
+  //  * (ct === "bitcoin" ? COIN_PRICES.BTC : COIN_PRICES.LTC);
 }
 
 function fmtDate(iso: string) {
@@ -159,7 +160,7 @@ const UserWithdrawalsPage = () => {
             {/* ── Mobile: stacked cards ── */}
             <div className="md:hidden space-y-3">
               {filtered.map((w) => {
-                const usd = usdValue(w.amount, w.coinType);
+                const usd = usdValue(w.amount);
                 return (
                   <div key={w._id} className="glass rounded-2xl p-4 space-y-3">
                     {/* Top row */}
@@ -198,14 +199,14 @@ const UserWithdrawalsPage = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border)] bg-[var(--bg-3)]">
-                      {["Coin", "Amount", "USD Value", "Wallet Address", "Date", "Status"].map((h) => (
+                      {["Coin", , "USD Value", "Wallet Address", "Date", "Status"].map((h) => (
                         <th key={h} className="text-left px-5 py-3 text-[10px] font-bold tracking-widest uppercase text-[var(--muted)] whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {filtered.map((w) => {
-                      const usd = usdValue(w.amount, w.coinType);
+                      const usd = usdValue(w.amount);
                       return (
                         <tr key={w._id} className="border-b border-[var(--border)] hover:bg-[var(--bg-3)] last:border-0 transition-colors">
                           {/* Coin */}
@@ -218,12 +219,12 @@ const UserWithdrawalsPage = () => {
                             </div>
                           </td>
                           {/* Amount */}
-                          <td className="px-5 py-4 font-mono font-bold">
+                          {/* <td className="px-5 py-4 font-mono font-bold">
                             {w.amount}{" "}
-                            <span className="text-xs font-normal" style={{ color: coinColor(w.coinType) }}>
+                             <span className="text-xs font-normal" style={{ color: coinColor(w.coinType) }}>
                               {coinLabel(w.coinType)}
-                            </span>
-                          </td>
+                            </span> 
+                          </td> */}
                           {/* USD Value */}
                           <td className="px-5 py-4 font-mono text-[var(--green)]">{formatUSD(usd)}</td>
                           {/* Wallet */}

@@ -43,6 +43,7 @@ export default function UserDashboardPage() {
     apiGetBalance()
       .then((res) => {
         setBalance(res.balance ?? 0);
+        console.log('balance response', res);
       })
       .catch(() => {});
   }, []);
@@ -53,7 +54,7 @@ export default function UserDashboardPage() {
       .then((prices) => {
         const btc = prices.bitcoin?.usd ?? 0;
         const ltc = prices.litecoin?.usd ?? 0;
-
+console.log('prices',prices)
         if (btc > 0) {
           setBtcPrice(btc);
         }

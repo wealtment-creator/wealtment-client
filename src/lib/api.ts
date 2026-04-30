@@ -98,9 +98,10 @@ export const apiGetMyWithdrawals = () =>
 export const apiGetAllWithdrawals = () =>
   endpointRoute.get("/withdrawals").then((r) => r.data);
 
-export const apiApproveWithdrawal = (id: string) =>
-  endpointRoute.put(`/withdrawals/approve/${id}`).then((r) => r.data);
-
+// export const apiApproveWithdrawal = (id: string) =>
+//   endpointRoute.put(`/withdrawals/approve/${id}`).then((r) => r.data);
+export const apiApproveWithdrawal = (id: string, description: string) =>
+  endpointRoute.put(`/withdrawals/approve/${id}`, { description }).then((r) => r.data);
 // https://wealtment-backend.onrender.com/api/withdrawals/approve
 // fund user
 export const apiFundUser = (id: string, amount: number) =>
@@ -110,6 +111,10 @@ export const apiFundUser = (id: string, amount: number) =>
 // Add this after apiGetProfile:
 export const apiGetAllUsers = () =>
   endpointRoute.get("/admin/users").then((r) => r.data);
+
+// delete user
+export const apiDeleteUser= (id: string) =>
+  endpointRoute.delete(`/admin/user/${id}`).then((r) => r.data);
 
 // referral
 export const apiGetReferrals = () =>

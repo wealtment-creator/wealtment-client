@@ -49,7 +49,8 @@ export default function AdminWithdrawalsPage() {
   const [viewModal,   setViewModal]   = useState<Withdrawal | null>(null);
   const [loading,     setLoading]     = useState(true);
   const [actionId,    setActionId]    = useState<string | null>(null);
-
+const [approveModal, setApproveModal] = useState<Withdrawal | null>(null);
+const [description, setDescription] = useState("");
   const fetchData = useCallback(async () => {
     const u = getUser();
     if (!u) { router.replace("/login"); return; }
@@ -65,19 +66,45 @@ export default function AdminWithdrawalsPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const handleApprove = async (w: Withdrawal) => {
-    setActionId(w._id);
-    try {
-      // PUT /withdrawals/approve/:id
-      await apiApproveWithdrawal(w._id);
-      setWithdrawals((p) => p.map((x) => x._id === w._id ? { ...x, status: "approved" } : x));
-      setViewModal(null);
-      toast.success(`Withdrawal for ${userName(w)} approved!`);
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Approval failed.");
-    } finally { setActionId(null); }
-  };
+  // const handleApprove = async (w: Withdrawal) => {
+  //   setActionId(w._id);
+  //   try {
+  //     // PUT /withdrawals/approve/:id
+  //     await apiApproveWithdrawal(w._id);
+  //     setWithdrawals((p) => p.map((x) => x._id === w._id ? { ...x, status: "approved" } : x));
+  //     setViewModal(null);
+  //     toast.success(`Withdrawal for ${userName(w)} approved!`);
+  //   } catch (e: unknown) {
+  //     toast.error(e instanceof Error ? e.message : "Approval failed.");
+  //   } finally { setActionId(null); }
+  // };
 
+  const handleApprove = async () => {
+  if (!approveModal) return;
+  if (!description.trim()) {
+    toast.error("Please enter a description.");
+    return;
+  }
+
+  setActionId(approveModal._id);
+  try {
+    await apiApproveWithdrawal(approveModal._id, description);
+
+    setWithdrawals((p) =>
+      p.map((x) =>
+        x._id === approveModal._id ? { ...x, status: "approved" } : x
+      )
+    );
+
+    toast.success("Withdrawal approved!");
+    setApproveModal(null);
+    setDescription("");
+  } catch (e: unknown) {
+    toast.error(e instanceof Error ? e.message : "Approval failed.");
+  } finally {
+    setActionId(null);
+  }
+};
   const copyAddr = (addr: string) => {
     navigator.clipboard.writeText(addr).then(() => toast.success("Address copied!"));
   };
@@ -208,7 +235,10 @@ const crypto = usd / coinPrice(w.coinType);
                         <Eye size={12} /> Details
                       </button>
                       {w.status === "pending" && (
-                        <button onClick={() => handleApprove(w)} disabled={actionId === w._id}
+                        <button onClick={() => {
+                          setApproveModal(w);
+                          setDescription("");
+                        }} disabled={actionId === w._id}
                           className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(52,211,153,0.3)] text-[var(--green)] bg-[rgba(52,211,153,0.06)] hover:bg-[rgba(52,211,153,0.14)] transition-colors disabled:opacity-50">
                           {actionId === w._id ? "…" : <><CheckCircle size={12} /> Approve</>}
                         </button>
@@ -272,7 +302,10 @@ const crypto = usd / coinPrice(w.coinType)
                               <Eye size={12} />
                             </button>
                             {w.status === "pending" && (
-                              <button onClick={() => handleApprove(w)} disabled={actionId === w._id}
+                              <button onClick={() => {
+                          setApproveModal(w);
+                          setDescription("");
+                        }} disabled={actionId === w._id}
                                 className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[rgba(52,211,153,0.3)] text-[var(--green)] bg-[rgba(52,211,153,0.06)] hover:bg-[rgba(52,211,153,0.14)] transition-colors disabled:opacity-50 flex items-center gap-1">
                                 {actionId === w._id ? "…" : <><CheckCircle size={10} /> Approve</>}
                               </button>
@@ -347,7 +380,10 @@ const crypto = usd / coinPrice(w.coinType)
 
       {viewModal.status === "pending" && (
         <button
-          onClick={() => handleApprove(viewModal)}
+          onClick={() => {
+  setApproveModal(viewModal);
+  setDescription("");
+}}
           disabled={actionId === viewModal._id}
           className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[var(--gold)] to-[var(--gold-2)] text-black font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
         >
@@ -366,6 +402,35 @@ const crypto = usd / coinPrice(w.coinType)
           )}
         </button>
       )}
+    </div>
+  )}
+</Modal>
+
+<Modal
+  open={!!approveModal}
+  onClose={() => setApproveModal(null)}
+  title="Approve Withdrawal"
+>
+  {approveModal && (
+    <div className="space-y-4 mt-2">
+      <p className="text-sm text-[var(--muted)]">
+        Add a note or transaction proof (optional but recommended).
+      </p>
+
+      <textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="e.g. Sent via Binance, TXID: 123abc..."
+        className="w-full h-28 p-3 rounded-xl bg-[var(--bg-3)] border border-[var(--border)] text-sm outline-none focus:border-[var(--gold)] resize-none"
+      />
+
+      <button
+        onClick={handleApprove}
+        disabled={actionId === approveModal._id}
+        className="w-full py-3 rounded-xl bg-gradient-to-r from-[var(--gold)] to-[var(--gold-2)] text-black font-bold text-sm disabled:opacity-60 flex items-center justify-center gap-2"
+      >
+        {actionId === approveModal._id ? "Processing..." : "Confirm & Approve"}
+      </button>
     </div>
   )}
 </Modal>

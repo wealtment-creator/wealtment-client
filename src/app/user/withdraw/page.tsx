@@ -308,7 +308,7 @@ export default function WithdrawPage() {
 
     try {
       await apiRequestWithdrawal({
-        amount: coinAmt,
+        amount: Number(amount),
         coin: coin,
         coinType: coin === "BTC" ? "bitcoin" : "litecoin",
         walletAddress: wallet || "btc_test_123",

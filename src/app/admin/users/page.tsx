@@ -8,7 +8,7 @@ import { DashLayout } from "@/components/layout/DashLayout";
 import { CryptoTicker } from "@/components/ui/CryptoTicker";
 import { Modal } from "@/components/ui/Modal";
 import { getUser } from "@/lib/auth";
-import { apiGetAllUsers, apiFundUser, apiDeductUser, apiEmailAll, apiEmailSelected ,apiEditUser} from "@/lib/api";
+import { apiGetAllUsers, apiFundUser, apiDeductUser, apiDeleteUser, apiEmailAll, apiEmailSelected ,apiEditUser} from "@/lib/api";
 import { formatUSD } from "@/lib/utils";
 import {
   Search, Users, Loader, CheckCircle, TrendingUp, Shield,
@@ -173,6 +173,19 @@ console.log('selectedUser',selectedUser)
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed."); }
     finally { setActionId(null); }
   };
+const [loadingDelete,setLoadingDelete]=useState(false)
+  const handleDeleteUser = async (id:string) => {
+    setLoadingDelete(true)
+    try {
+      await apiDeleteUser(id);
+      // setUsers((p) => p.map((u) => u._id === selectedUser._id ? { ...u, balance: u.balance - amt } : u));
+      setUsers((p)=>p.filter((item)=>item._id!==id))
+      toast.success(`user deleted successfully`);
+      closeModal();
+      setLoadingDelete(false)
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed."); }
+    finally { setActionId(null), setLoadingDelete(false) }
+  };
 
   const handleEmailAll = async () => {
     if (!emailSubject.trim() || !emailMessage.trim()) { toast.error("Subject and message are required."); return; }
@@ -329,6 +342,14 @@ console.log('selectedUser',selectedUser)
 >
   Edit
 </button>
+       <button
+  onClick={() => handleDeleteUser(u._id)}
+  className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-white bg-red-500 hover:opacity-80 transition-colors"
+>
+ 
+
+  {loadingDelete? "Deleting..":"Delete"}
+</button>
                   </div>
                   <p className="text-xs text-[var(--muted)]">Joined {fmtDate(u.createdAt)}</p>
                 </div>
@@ -390,6 +411,14 @@ console.log('selectedUser',selectedUser)
   className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[var(--teal)] text-[var(--teal)] bg-[var(--teal-glow)]"
 >
   Edit
+</button>
+  <button
+  onClick={() => handleDeleteUser(u._id)}
+  className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-white bg-red-500 hover:opacity-80 transition-colors"
+>
+ 
+
+  {loadingDelete? "Deleting..":"Delete"}
 </button>
                         </div>
                       </td>
