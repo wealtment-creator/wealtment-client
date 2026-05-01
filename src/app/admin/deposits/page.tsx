@@ -73,6 +73,25 @@ export default function AdminDepositsPage() {
     setFundAmount(String(d.amount));
   };
 
+  //  const handleFundUser = async () => {
+  //   if (!viewModal) return;
+  //   const amt = parseFloat(fundAmount);
+  //   if (!amt || amt <= 0) { toast.error("Enter a valid amount."); return; }
+  //   const uid = userId(viewModal);
+  //   if (!uid) { toast.error("User ID not found."); return; }
+  //   setActionId(viewModal._id);
+  //   try {
+  //     // PUT /admin/fund-user/:userId  body: { amount }
+  //     await apiApproveDeposit(viewModal._id);
+  //     setDeposits((p) => p.map((x) => x._id === viewModal._id ? { ...x, status: "approved" } : x));
+  //     setViewModal(null);
+  //     toast.success(`${userName(viewModal)} funded with ${amt} ${`$`}!`);
+  //   } catch (e: unknown) {
+  //     toast.error(e instanceof Error ? e.message : "Fund failed.");
+  //   } finally { setActionId(null); }
+  // };
+    const [description, setDescription] = useState("");
+
    const handleFundUser = async () => {
     if (!viewModal) return;
     const amt = parseFloat(fundAmount);
@@ -82,7 +101,7 @@ export default function AdminDepositsPage() {
     setActionId(viewModal._id);
     try {
       // PUT /admin/fund-user/:userId  body: { amount }
-      await apiApproveDeposit(viewModal._id);
+      await apiApproveDeposit(viewModal._id, description);
       setDeposits((p) => p.map((x) => x._id === viewModal._id ? { ...x, status: "approved" } : x));
       setViewModal(null);
       toast.success(`${userName(viewModal)} funded with ${amt} ${`$`}!`);
@@ -321,6 +340,17 @@ export default function AdminDepositsPage() {
         </div>
         <StatusBadge status={viewModal.status} />
       </div>
+
+        <p className="text-sm text-[var(--muted)]">
+        Add a note  (optional).
+      </p>
+
+      <textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="e.g. Sent via Binance, TXID: 123abc..."
+        className="w-full h-28 p-3 rounded-xl bg-[var(--bg-3)] border border-[var(--border)] text-sm outline-none focus:border-[var(--gold)] resize-none"
+      />
 
       {/* Deposit info */}
       <div className="rounded-xl bg-[var(--bg-3)] border border-[var(--border)] p-4 space-y-2.5 text-sm">
