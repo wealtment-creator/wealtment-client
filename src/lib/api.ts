@@ -44,9 +44,9 @@ export const apiDeletePlan = (id: string) =>
   endpointRoute.delete(`/package/${id}`).then((r) => r.data);
 
 // ── INVESTMENTS ───────────────────────────────────────────────────────────────
-export const apiInvest = (planId: string, amount:number
+export const apiInvest = (planId: string, amount:number, coin: "bitcoin" | "litecoin"
 ) =>
-  endpointRoute.post("/investments", { packageId: planId, amount:amount }).then((r) => r.data);
+  endpointRoute.post("/investments", { packageId: planId, amount:amount, coinType:coin }).then((r) => r.data);
 
 export const apiGetMyInvestments = () =>
   endpointRoute.get("/investments/my").then((r) => r.data);
@@ -82,8 +82,8 @@ export const apiGetMyDeposits = () =>
 export const apiGetAllDeposits = () =>
   endpointRoute.get("/deposits").then((r) => r.data);
 
-export const apiApproveDeposit = (id: string) =>
-  endpointRoute.put(`/deposits/approve/${id}`).then((r) => r.data);
+export const apiApproveDeposit = (id: string, description:string) =>
+  endpointRoute.put(`/deposits/approve/${id}`,{description}).then((r) => r.data);
 // profile
 export const apiChangePassword = (body: { currentPassword: string; newPassword: string }) =>
   endpointRoute.put("/user/change-password", body).then((r) => r.data);
@@ -126,8 +126,8 @@ export const apiTransferReferral = (amount: string) =>
 // apiApproveWithdrawal(id) → now correctly hits PUT /withdrawals/approve/:id
 // apiRequestWithdrawal and apiCreateDeposit now send coinType: "bitcoin" | "litecoin" (matching what the API expects)
 
-export const apiDeductUser = (id: string, amount: number) =>
-  endpointRoute.put(`/admin/deduct/${id}`, { amount }).then((r) => r.data);
+export const apiDeductUser = (id: string, amount: number, coinType:'bitcoin'|'litecoin') =>
+  endpointRoute.put(`/admin/deduct/${id}`, { amount, coinType}).then((r) => r.data);
 
 
 // Email: send to ALL users

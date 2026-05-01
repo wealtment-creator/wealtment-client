@@ -89,6 +89,7 @@ const [description, setDescription] = useState("");
   setActionId(approveModal._id);
   try {
     await apiApproveWithdrawal(approveModal._id, description);
+    console.log('id',approveModal._id, 'desc', description)
 
     setWithdrawals((p) =>
       p.map((x) =>

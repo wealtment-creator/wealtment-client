@@ -67,7 +67,10 @@ const [editBTC, setEditBTC] = useState("");
 const [editLTC, setEditLTC] = useState("");
 const [editPassword, setEditPassword] = useState("");
 
-
+const [coinType, setCoinType] = useState<"bitcoin" | "litecoin">("bitcoin");
+const handleSelectCoin = (coin: "bitcoin" | "litecoin") => {
+  setCoinType(coin);
+};
 const openEdit = (u: AdminUserRow) => {
   setSelectedUser(u);
   setEditName(u.name || "");
@@ -166,7 +169,7 @@ console.log('selectedUser',selectedUser)
     if (amt > selectedUser.balance) { toast.error("Amount exceeds user balance."); return; }
     setActionId(selectedUser._id);
     try {
-      await apiDeductUser(selectedUser._id, amt);
+      await apiDeductUser(selectedUser._id, amt, coinType);
       setUsers((p) => p.map((u) => u._id === selectedUser._id ? { ...u, balance: u.balance - amt } : u));
       toast.success(`${selectedUser.name} deducted -${formatUSD(amt)}`);
       closeModal();
@@ -494,6 +497,34 @@ const [loadingDelete,setLoadingDelete]=useState(false)
         <div className="space-y-4 mt-2">
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] font-bold tracking-[1.5px] uppercase text-[var(--muted)]">Amount to Deduct (USD)</label>
+
+          <div className="flex my-2 gap-3">
+  <div
+    onClick={() => handleSelectCoin("bitcoin")}
+    className={`cursor-pointer px-3 py-1 rounded-lg border ${
+      coinType === "bitcoin"
+        ? "border-[var(--green)] bg-[var(--green)]/10"
+        : "border-transparent"
+    }`}
+  >
+    <p className="font-mono font-bold text-sm text-[var(--green)]">
+      BTC
+    </p>
+  </div>
+
+  <div
+    onClick={() => handleSelectCoin("litecoin")}
+    className={`cursor-pointer px-3 py-1 rounded-lg border ${
+      coinType === "litecoin"
+        ? "border-[var(--teal)] bg-[var(--teal)]/10"
+        : "border-transparent"
+    }`}
+  >
+    <p className="font-mono font-bold text-sm text-[var(--teal)]">
+      LTC
+    </p>
+  </div>
+</div>
             <div className="relative">
               <input type="number" step="any" min="1" max={selectedUser?.balance} placeholder="e.g. 100" value={actionAmt} onChange={(e) => setActionAmt(e.target.value)}
                 className="w-full px-4 py-3 pr-12 rounded-lg bg-[var(--bg-3)] border border-[var(--border)] text-[var(--text)] text-sm outline-none focus:border-[var(--gold)] transition-colors font-mono" />

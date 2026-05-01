@@ -22,7 +22,10 @@ export default function UserDashboardPage() {
   const [btcPrice,    setBtcPrice]    = useState(COIN_PRICES.BTC);
   const [ltcPrice,    setLtcPrice]    = useState(COIN_PRICES.LTC);
   const [loading,     setLoading]     = useState(true);
-  const [balance,     setBalance]     = useState<number>(0);
+  // const [balance,     setBalance]     = useState<number>(0);
+  const [balance, setBalance] = useState(0);
+const [btcBal, setBtcBal] = useState(0);
+const [ltcBal, setLtcBal] = useState(0);
   useEffect(() => {
     const u = getUser();
     if (!u) { router.replace("/login"); return; }
@@ -40,12 +43,16 @@ export default function UserDashboardPage() {
 
   useEffect(() => {
     // Fetch balance
-    apiGetBalance()
-      .then((res) => {
-        setBalance(res.balance ?? 0);
-        console.log('balance response', res);
-      })
-      .catch(() => {});
+   apiGetBalance()
+  .then((res) => {
+    console.log('res-balance', res);
+
+    setBtcBal(res.btcBalance ?? 0);
+    setLtcBal(res.ltcBalance ?? 0);
+
+    // total = btc + ltc (clean)
+    setBalance((res.btcBalance ?? 0) + (res.ltcBalance ?? 0));
+  })
   }, []);
 
   useEffect(() => {
@@ -54,7 +61,7 @@ export default function UserDashboardPage() {
       .then((prices) => {
         const btc = prices.bitcoin?.usd ?? 0;
         const ltc = prices.litecoin?.usd ?? 0;
-console.log('prices',prices)
+
         if (btc > 0) {
           setBtcPrice(btc);
         }
@@ -89,14 +96,7 @@ console.log('prices',prices)
   }, []);
 
   // balance is now USD
-const usdBalance = useMemo(() => balance, [balance]);
-
-// convert USD → crypto
-const btcBalance = useMemo(() => usdBalance / btcPrice, [usdBalance, btcPrice]);
-const ltcBalance = useMemo(() => usdBalance / ltcPrice, [usdBalance, ltcPrice]);
-
-// portfolio is just USD
-const portfolioBalance = useMemo(() => usdBalance, [usdBalance]);
+const portfolioBalance = balance;
 
   if (!user) return null;
 
@@ -156,10 +156,11 @@ const portfolioBalance = useMemo(() => usdBalance, [usdBalance]);
                 <div className="min-w-0">
                   <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--muted)]">Bitcoin Balance</p>
                 <p className="font-mono font-bold text-base mt-0.5">
-  {formatUSD(usdBalance)}
+${btcBal.toFixed(2)}
+
 </p>
 <p className="text-xs text-[var(--muted)]">
-  ≈ {btcBalance.toFixed(6)} <span className="text-[#F7931A]">BTC</span>
+  ≈ {(btcBal / btcPrice).toFixed(6)} BTC<span className="text-[#F7931A]">BTC</span>
 </p>
                 </div>
               </div>
@@ -169,10 +170,12 @@ const portfolioBalance = useMemo(() => usdBalance, [usdBalance]);
                 <div className="min-w-0">
                   <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--muted)]">Litecoin Balance</p>
                  <p className="font-mono font-bold text-base mt-0.5">
-  {formatUSD(usdBalance)}
+  ${ltcBal.toFixed(2)}
+
+LTC
 </p>
 <p className="text-xs text-[var(--muted)]">
-  ≈ {ltcBalance.toFixed(4)} <span className="text-[var(--teal)]">LTC</span>
+≈ {(ltcBal / ltcPrice).toFixed(4)}  <span className="text-[var(--teal)]">LTC</span>
 </p>
                 </div>
               </div>
@@ -183,8 +186,8 @@ const portfolioBalance = useMemo(() => usdBalance, [usdBalance]);
               <div className="mt-3 overflow-x-scroll  flex items-center gap-3 bg-[var(--gold-glow)] border border-[rgba(212,168,67,0.2)] rounded-xl p-4 md:overflow-x-hidden">
                 <div className="w-10 h-10 rounded-full bg-[var(--gold-glow)] flex items-center justify-center shrink-0"><TrendingUp size={18} className="text-[var(--gold)]"/></div>
                 <div className="flex-1"><p className="text-[10px] font-bold tracking-widest uppercase text-[var(--muted)]">Total Balance</p><p className="font-mono font-bold text-base text-[var(--gold)] mt-0.5">{formatUSD(portfolioBalance)}</p></div>
-                <div className="text-right shrink-0"><p className="text-[10px] text-[var(--muted)] uppercase">BTC</p><p className="font-mono font-bold text-sm text-[var(--green)]">{btcBalance.toFixed(6)} BTC</p></div>
-                <div className="text-right shrink-0"><p className="text-[10px] text-[var(--muted)] uppercase">LTC</p><p className="font-mono font-bold text-sm text-[var(--teal)]">{ltcBalance.toFixed(4)} LTC</p></div>
+                <div className="text-right shrink-0"><p className="text-[10px] text-[var(--muted)] uppercase">BTC</p><p className="font-mono font-bold text-sm text-[var(--green)]">{(btcBal / btcPrice).toFixed(6)} BTC</p></div>
+                <div className="text-right shrink-0"><p className="text-[10px] text-[var(--muted)] uppercase">LTC</p><p className="font-mono font-bold text-sm text-[var(--teal)]">{(ltcBal / ltcPrice).toFixed(4)} LTC</p></div>
               </div>
             )}
           </div>
@@ -195,7 +198,7 @@ const portfolioBalance = useMemo(() => usdBalance, [usdBalance]);
           <StatCard label="Inv. Balance" value={formatUSD(principal)}        icon={<Wallet size={16}/>}       accent="var(--gold)" />
           <StatCard label="Interest"     value={`+${formatUSD(interest)}`}   icon={<TrendingUp size={16}/>}   accent="var(--green)" />
           <StatCard label="Total Return" value={formatUSD(principal+interest)}icon={<ArrowUpRight size={16}/>} accent="var(--teal)" />
-          <StatCard label="Active Plan"  value={plan?.name ?? "None"}         icon={<Package size={16}/>}      accent={plan ? "var(--gold)" : "var(--muted)"} sub={plan ? `${rate}% in ${plan.duration}d` : "No active plan"} />
+          <StatCard label="Active Plan"  value={plan?.name ?? "None"}         icon={<Package size={16}/>}      accent={plan ? "var(--gold)" : "var(--muted)"} sub={plan ? `${rate}% in ${plan.duration} hour (s)` : "No active plan"} />
         </div>
 
         {/* Next payment */}
@@ -238,7 +241,7 @@ const portfolioBalance = useMemo(() => usdBalance, [usdBalance]);
                         <span className="font-bold text-[var(--gold)]">{inv.package?.name ?? "—"}</span>
                         <Badge variant={inv.status === "active" ? "green" : inv.status === "pending" ? "yellow" : "muted"}>{inv.status}</Badge>
                       </div>
-                      {[["Principal", formatUSD(inv.amount)], ["Interest", `+${formatUSD(rt)}`], ["Total", formatUSD(inv.amount + rt)], ["Duration", inv.package?.duration ? `${inv.package.duration}d` : "—"], ["Start", inv.startDate ? new Date(inv.startDate).toLocaleDateString() : "—"], ["End", inv.endDate ? new Date(inv.endDate).toLocaleDateString() : "—"]].map(([k, v]) => (
+                      {[["Principal", formatUSD(inv.amount)], ["Interest", `+${formatUSD(rt)}`], ["Total", formatUSD(inv.amount + rt)], ["Duration", inv.package?.duration ? `${inv.package.duration} hour (s)` : "—"], ["Start", inv.startDate ? new Date(inv.startDate).toLocaleDateString() : "—"], ["End", inv.endDate ? new Date(inv.endDate).toLocaleDateString() : "—"]].map(([k, v]) => (
                         <div key={k} className="flex justify-between text-sm"><span className="text-[var(--muted)]">{k}</span><span className="font-mono font-semibold">{v}</span></div>
                       ))}
                     </div>
@@ -273,7 +276,7 @@ variant={
                           <td className="px-6 py-4 font-mono">{formatUSD(inv.amount)}</td>
                           <td className="px-6 py-4 font-mono text-[var(--green)]">+{formatUSD(rt)}</td>
                           <td className="px-6 py-4 font-mono font-bold text-[var(--gold)]">{formatUSD(inv.amount + rt)}</td>
-                          <td className="px-6 py-4 text-xs">{inv.package?.duration ? `${inv.package.duration}d` : "—"}</td>
+                          <td className="px-6 py-4 text-xs">{inv.package?.duration ? `${inv.package.duration} hours (s)` : "—"}</td>
                           {/* <td className="px-6 py-4 text-xs text-[var(--muted)]">{inv.startDate ? new Date(inv.startDate).toLocaleDateString() : "—"}</td>
                           <td className="px-6 py-4 text-xs text-[var(--teal)]">{inv.endDate ? new Date(inv.endDate).toLocaleDateString() : "—"}</td> */}
                         </tr>

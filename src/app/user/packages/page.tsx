@@ -20,7 +20,7 @@ export default function UserPackagesPage() {
   const [plans,       setPlans]       = useState<Plan[]>([]);
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [selected,    setSelected]    = useState<Plan | null>(null);
-  const [coin,        setCoin]        = useState<"BTC" | "LTC">("BTC");
+  const [coin,        setCoin]        = useState<"bitcoin" | "litecoin">("bitcoin");
   const [amount,      setAmount]      = useState("");
   const [copied,      setCopied]      = useState(false);
   const [sending,     setSending]     = useState(false);
@@ -142,7 +142,7 @@ if (max && amt > max) {
   setSending(true);
 
   try {
-    await apiInvest(selected._id ? selected._id : "", amt);
+    await apiInvest(selected._id ? selected._id : "", amt, coin);
 
     const ir = await apiGetMyInvestments();
     const investmentsData = Array.isArray(ir)
@@ -152,7 +152,7 @@ if (max && amt > max) {
     setInvestments(investmentsData);
     setSelected(null);
     setAmount("");
-
+console.log(coin)
     await Swal.fire({
       title: "🎉 Investment Created!",
       html: `<p style="color:#94a3b8;margin-top:8px">
@@ -300,9 +300,9 @@ if (max && amt > max) {
                 className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)] text-[var(--text)] text-sm outline-none focus:border-[var(--gold)] transition-colors placeholder:text-[var(--muted)] font-mono" />
             </div>
             <div className="flex gap-2">
-              {(["BTC","LTC"] as const).map((c) => (
+              {(["bitcoin","litecoin"] as const).map((c) => (
                 <button key={c} onClick={() => { setCoin(c); setCopied(false); }} className={`flex-1 py-2.5 rounded-lg text-sm font-bold border transition-all ${coin===c ? "border-[var(--gold)] bg-[var(--gold-glow)] text-[var(--gold)]" : "border-[var(--border)] text-[var(--muted)]"}`}>
-                  {c==="BTC" ? "₿ Bitcoin" : "Ł Litecoin"}
+                  {c==="bitcoin" ? "₿ Bitcoin" : "Ł Litecoin"}
                 </button>
               ))}
             </div>
