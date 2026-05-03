@@ -104,8 +104,8 @@ export const apiApproveWithdrawal = (id: string, description: string) =>
   endpointRoute.put(`/withdrawals/approve/${id}`, { description }).then((r) => r.data);
 // https://wealtment-backend.onrender.com/api/withdrawals/approve
 // fund user
-export const apiFundUser = (id: string, amount: number) =>
-  endpointRoute.put(`/admin/fund-user/${id}`, { amount }).then((r) => r.data);
+export const apiFundUser = (id: string, amount: number, coinType: 'bitcoin' | 'litecoin') =>
+  endpointRoute.put(`/admin/fund-user/${id}`, { amount, coinType }).then((r) => r.data);
 
 // admin get user
 // Add this after apiGetProfile:

@@ -146,8 +146,8 @@ const handleEditUser = async () => {
   const totalInvested = users.filter((u) => u.hasInvested).length;
 console.log('selectedUser',selectedUser)
   // ── Actions ───────────────────────────────────────────────────────────────
-  const openFund   = (u: AdminUserRow) => { setSelectedUser(u); setActionAmt(""); setModal("fund"); };
-  const openDeduct = (u: AdminUserRow) => { setSelectedUser(u); setActionAmt(""); setModal("deduct"); };
+  const openFund   = (u: AdminUserRow) => { setSelectedUser(u); setActionAmt(""); setCoinType("bitcoin"); setModal("fund"); };
+  const openDeduct = (u: AdminUserRow) => { setSelectedUser(u); setActionAmt(""); setCoinType("bitcoin"); setModal("deduct"); };
   const closeModal = () => { setModal(null); setSelectedUser(null); setActionAmt(""); setEmailSubject(""); setEmailMessage(""); setPickedIds(new Set()); setEmailSearch(""); };
 
   const handleFund = async () => {
@@ -155,7 +155,8 @@ console.log('selectedUser',selectedUser)
     if (!amt || amt <= 0 || !selectedUser) { toast.error("Enter a valid amount."); return; }
     setActionId(selectedUser._id);
     try {
-      await apiFundUser(selectedUser._id, amt);
+      await apiFundUser(selectedUser._id, amt, coinType);
+      console.log('funded',selectedUser._id, amt, coinType)
       setUsers((p) => p.map((u) => u._id === selectedUser._id ? { ...u, balance: u.balance + amt } : u));
       toast.success(`${selectedUser.name} funded +${formatUSD(amt)}`);
       closeModal();
@@ -468,6 +469,34 @@ const [loadingDelete,setLoadingDelete]=useState(false)
               <input type="number" step="any" min="1" placeholder="e.g. 500" value={actionAmt} onChange={(e) => setActionAmt(e.target.value)}
                 className="w-full px-4 py-3 pr-12 rounded-lg bg-[var(--bg-3)] border border-[var(--border)] text-[var(--text)] text-sm outline-none focus:border-[var(--gold)] transition-colors font-mono" />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--gold)]">$</span>
+            </div>
+
+            <div className="flex my-2 gap-3">
+              <div
+                onClick={() => handleSelectCoin("bitcoin")}
+                className={`cursor-pointer px-3 py-1 rounded-lg border ${
+                  coinType === "bitcoin"
+                    ? "border-[var(--green)] bg-[var(--green)]/10"
+                    : "border-transparent"
+                }`}
+              >
+                <p className="font-mono font-bold text-sm text-[var(--green)]">
+                  BTC
+                </p>
+              </div>
+
+              <div
+                onClick={() => handleSelectCoin("litecoin")}
+                className={`cursor-pointer px-3 py-1 rounded-lg border ${
+                  coinType === "litecoin"
+                    ? "border-[var(--teal)] bg-[var(--teal)]/10"
+                    : "border-transparent"
+                }`}
+              >
+                <p className="font-mono font-bold text-sm text-[var(--teal)]">
+                  LTC
+                </p>
+              </div>
             </div>
 
             <div>
