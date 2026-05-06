@@ -31,6 +31,9 @@ interface ReferralsData {
   totalReferrals: number;
   totalEarnings: number;
   referrals: Referral[];
+  referralCode:string;
+  
+referralName:string
 }
 
 function fmtDate(iso: string) {
@@ -51,7 +54,7 @@ console.log('referrals data', data)
   const user = getUser();
   const referralLink =
     typeof window !== "undefined" && user
-      ? `${window.location.origin}/signup?ref=${user.name}`
+      ? `${window.location.origin}/signup?ref=${data?.referralCode}`
       : "";
 
   const load = async () => {

@@ -6,13 +6,12 @@ import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { CryptoTicker } from "@/components/ui/CryptoTicker";
 import { getUser } from "@/lib/auth";
-import { apiGetAllWithdrawals, apiApproveWithdrawal } from "@/lib/api";
+import { apiGetAllWithdrawals, apiApproveWithdrawal, apiRejectWithdrawal, apiDeleteWithdrawal } from "@/lib/api";
 import { COIN_PRICES } from "@/lib/data";
 import { formatUSD } from "@/lib/utils";
 import {
-  CheckCircle, Eye, Copy, Search, ArrowUpFromLine, Clock, Filter, Loader,
+  CheckCircle, Eye, Copy, Search, Clock, Filter, Loader,
 } from "lucide-react";
-import { useAutoScroll } from "@/hooks/useAutoScroll";
 
 import toast from "react-hot-toast";
 import type { Withdrawal } from "@/types";
@@ -47,10 +46,12 @@ export default function AdminWithdrawalsPage() {
   const [filter,      setFilter]      = useState<FilterStatus>("all");
   const [search,      setSearch]      = useState("");
   const [viewModal,   setViewModal]   = useState<Withdrawal | null>(null);
+  const [rejectModal, setRejectModal] = useState<Withdrawal | null>(null);
+  const [deleteModal, setDeleteModal] = useState<Withdrawal | null>(null);
   const [loading,     setLoading]     = useState(true);
   const [actionId,    setActionId]    = useState<string | null>(null);
-const [approveModal, setApproveModal] = useState<Withdrawal | null>(null);
-const [description, setDescription] = useState("");
+  const [approveModal, setApproveModal] = useState<Withdrawal | null>(null);
+  const [description, setDescription] = useState("");
   const fetchData = useCallback(async () => {
     const u = getUser();
     if (!u) { router.replace("/login"); return; }
@@ -106,6 +107,49 @@ const [description, setDescription] = useState("");
     setActionId(null);
   }
 };
+
+const openRejectModal = (w: Withdrawal) => {
+  setRejectModal(w);
+  setDescription("");
+};
+
+const handleConfirmRejectWithdrawal = async () => {
+  if (!rejectModal) return;
+  // if (!description.trim()) { toast.error("Please include a rejection reason."); return; }
+  setActionId(rejectModal._id);
+  try {
+    await apiRejectWithdrawal(rejectModal._id, description);
+    setWithdrawals((p) => p.map((x) => x._id === rejectModal._id ? { ...x, status: "rejected" } : x));
+    toast.success("Withdrawal rejected.");
+    setRejectModal(null);
+    setDescription("");
+  } catch (e: unknown) {
+    toast.error(e instanceof Error ? e.message : "Reject failed.");
+  } finally {
+    setActionId(null);
+  }
+};
+
+const openDeleteModal = (w: Withdrawal) => {
+  setDeleteModal(w);
+};
+
+const handleConfirmDeleteWithdrawal = async () => {
+  if (!deleteModal) return;
+  setActionId(deleteModal._id);
+  try {
+    await apiDeleteWithdrawal(deleteModal._id);
+    setWithdrawals((p) => p.filter((x) => x._id !== deleteModal._id));
+    if (viewModal?._id === deleteModal._id) setViewModal(null);
+    toast.success("Withdrawal deleted.");
+    setDeleteModal(null);
+  } catch (e: unknown) {
+    toast.error(e instanceof Error ? e.message : "Delete failed.");
+  } finally {
+    setActionId(null);
+  }
+};
+
   const copyAddr = (addr: string) => {
     navigator.clipboard.writeText(addr).then(() => toast.success("Address copied!"));
   };
@@ -230,9 +274,9 @@ const crypto = usd / coinPrice(w.coinType);
 
                     <p className="text-xs text-[var(--muted)]">{fmtDate(w.createdAt)}</p>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <button onClick={() => setViewModal(w)}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[var(--border-2)] text-[var(--muted)] hover:border-[var(--gold)] hover:text-[var(--gold)] transition-colors">
+                        className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[var(--border-2)] text-[var(--muted)] hover:border-[var(--gold)] hover:text-[var(--gold)] transition-colors">
                         <Eye size={12} /> Details
                       </button>
                       {w.status === "pending" && (
@@ -240,10 +284,20 @@ const crypto = usd / coinPrice(w.coinType);
                           setApproveModal(w);
                           setDescription("");
                         }} disabled={actionId === w._id}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(52,211,153,0.3)] text-[var(--green)] bg-[rgba(52,211,153,0.06)] hover:bg-[rgba(52,211,153,0.14)] transition-colors disabled:opacity-50">
+                          className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(52,211,153,0.3)] text-[var(--green)] bg-[rgba(52,211,153,0.06)] hover:bg-[rgba(52,211,153,0.14)] transition-colors disabled:opacity-50">
                           {actionId === w._id ? "…" : <><CheckCircle size={12} /> Approve</>}
                         </button>
                       )}
+                      {w.status === "pending" && (
+                        <button onClick={() => openRejectModal(w)} disabled={actionId === w._id}
+                          className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(239,68,68,0.3)] text-[var(--red)] bg-[rgba(239,68,68,0.08)] hover:bg-[rgba(239,68,68,0.16)] transition-colors disabled:opacity-50">
+                          Reject
+                        </button>
+                      )}
+                      <button onClick={() => openDeleteModal(w)} disabled={actionId === w._id}
+                        className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(148,163,184,0.3)] text-[var(--muted)] bg-[rgba(148,163,184,0.08)] hover:bg-[rgba(148,163,184,0.16)] transition-colors disabled:opacity-50">
+                        Delete
+                      </button>
                     </div>
                   </div>
                 );
@@ -311,6 +365,16 @@ const crypto = usd / coinPrice(w.coinType)
                                 {actionId === w._id ? "…" : <><CheckCircle size={10} /> Approve</>}
                               </button>
                             )}
+                            {w.status === "pending" && (
+                              <button onClick={() => openRejectModal(w)} disabled={actionId === w._id}
+                                className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[rgba(239,68,68,0.3)] text-[var(--red)] bg-[rgba(239,68,68,0.08)] hover:bg-[rgba(239,68,68,0.16)] transition-colors disabled:opacity-50">
+                                Reject
+                              </button>
+                            )}
+                            <button onClick={() => openDeleteModal(w)} disabled={actionId === w._id}
+                              className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[rgba(148,163,184,0.3)] text-[var(--muted)] bg-[rgba(148,163,184,0.08)] hover:bg-[rgba(148,163,184,0.16)] transition-colors disabled:opacity-50">
+                              Delete
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -435,6 +499,49 @@ const crypto = usd / coinPrice(w.coinType)
     </div>
   )}
 </Modal>
+
+      <Modal open={!!rejectModal} onClose={() => setRejectModal(null)} title="Reject Withdrawal">
+        {rejectModal && (
+          <div className="space-y-4 mt-2">
+            <p className="text-sm text-[var(--muted)]">
+              Please provide a reason for rejecting this withdrawal request.
+            </p>
+
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="e.g. Invalid wallet address, insufficient balance, or security review"
+              className="w-full h-28 p-3 rounded-xl bg-[var(--bg-3)] border border-[var(--border)] text-sm outline-none focus:border-[var(--gold)] resize-none"
+            />
+
+            <button
+              onClick={handleConfirmRejectWithdrawal}
+              disabled={actionId === rejectModal._id}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-[var(--red)] to-[rgba(239,68,68,0.86)] text-white font-bold text-sm disabled:opacity-60"
+            >
+              {actionId === rejectModal._id ? "Processing..." : "Confirm Reject"}
+            </button>
+          </div>
+        )}
+      </Modal>
+
+      <Modal open={!!deleteModal} onClose={() => setDeleteModal(null)} title="Delete Withdrawal">
+        {deleteModal && (
+          <div className="space-y-4 mt-2">
+            <p className="text-sm text-[var(--muted)]">
+              This action is permanent. Are you sure you want to delete this withdrawal request?
+            </p>
+
+            <button
+              onClick={handleConfirmDeleteWithdrawal}
+              disabled={actionId === deleteModal._id}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-[var(--border-2)] to-[var(--border)] text-black font-bold text-sm disabled:opacity-60"
+            >
+              {actionId === deleteModal._id ? "Deleting..." : "Confirm Delete"}
+            </button>
+          </div>
+        )}
+      </Modal>
     </DashLayout>
   );
 }

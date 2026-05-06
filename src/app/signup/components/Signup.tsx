@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { CRYPTO_IMAGES } from "@/lib/data";
 import { setUser } from "@/lib/auth";
 import { apiSignup } from "@/lib/api";
+import endpointRoute from "@/lib/endpointRoute";
 import { TrendingUp, Eye, EyeOff, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import type { User } from "@/types";
@@ -20,23 +21,34 @@ export default function SignupPage() {
     confirm: "",
     bitcoinAddress: "",
     litecoinAddress: "",
-    referralCode: "",   // ← key must match exactly
+    referralCode: "",  
   });
   // initialize urlsearchparams
   const searchParams = useSearchParams();
   useEffect(() => {
-  const ref = searchParams.get("ref");
-  if (ref) {
-    setForm((prev) => ({
-      ...prev,
-      referralCode: ref,
-    }));
-  }
-}, [searchParams]);
+    const ref = searchParams.get("ref");
+    if (ref) {
+      setForm((prev) => ({
+        ...prev,
+        referralCode: ref,
+      }));
+      
+      // Fetch referral name from API
+      endpointRoute.get(`/auth/referrer/${ref}`).then((res) => {
+        if (res.data && res.data.name) {
+          setReferralName(res.data.name);
+          console.log('Referral name found:', res);
+        }
+      }).catch(() => {
+        // Silent fail if referral not found
+      });
+    }
+  }, [searchParams]);
 
-  const [showPw,  setShowPw]  = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [done,    setDone]    = useState(false);
+  const [showPw,      setShowPw]      = useState(false);
+  const [loading,     setLoading]     = useState(false);
+  const [done,        setDone]        = useState(false);
+  const [referralName, setReferralName] = useState<string | null>(null);
   const router = useRouter();
 
   // Generic field setter — always reads from form state, never undefined
@@ -56,8 +68,8 @@ export default function SignupPage() {
         password:        form.password,
         bitcoinAddress:  form.bitcoinAddress  || undefined,
         litecoinAddress: form.litecoinAddress || undefined,
-          referral: form.referralCode || undefined, 
- // optional — only sent if filled
+        referralCode:    form.referralCode   || undefined,
+        // optional — only sent if filled
       });
 
       if (data.token && data.user) {
@@ -162,12 +174,18 @@ export default function SignupPage() {
               <label className="text-[10px] font-bold tracking-[1.5px] uppercase text-[var(--muted)]">
                 Referral Name <span className="normal-case font-normal text-[var(--muted)]">(optional)</span>
               </label>
+              {referralName && (
+                <p className="text-xs text-[var(--teal)] font-semibold px-3 py-2 rounded-lg bg-[rgba(20,184,166,0.1)] border border-[rgba(20,184,166,0.3)]">
+                  Referred by <span className="font-bold">{referralName}</span>
+                </p>
+              )}
               <input
                 type="text"
                 placeholder="Enter referral name if you have one"
-                value={form.referralCode}          // ← FIXED: was form["referral"] = undefined
-                onChange={set("referralCode")}     // ← FIXED: key matches form state
-                className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)] text-[var(--text)] text-sm outline-none focus:border-[var(--gold)] transition-colors placeholder:text-[var(--muted)]"
+                value={form.referralCode}
+                onChange={set("referralCode")}
+                disabled={!!referralName}
+                className="w-full px-4 py-3 rounded-lg bg-[var(--bg-3)] border border-[var(--border)] text-[var(--text)] text-sm outline-none focus:border-[var(--gold)] transition-colors placeholder:text-[var(--muted)] disabled:opacity-50"
               />
             </div>
 

@@ -39,6 +39,7 @@ export default function LoginPage() {
         bitcoin:         apiUser.bitcoinAddress  ?? "",
         litecoin:        apiUser.litecoinAddress ?? "",
         balance:         0,
+        referralCode:    apiUser.referralCode ?? "",
         btcBalance:      0,
         ltcBalance:      0,
         package:         null,

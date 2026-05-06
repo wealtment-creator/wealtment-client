@@ -14,9 +14,11 @@ export function getUser(): User | null {
     u.name       = u.name       ?? "Unknown";
     u.ltcBalance  = u.ltcBalance  ?? 0;
     u.balance     = u.balance     ?? 0;
+    u.referralCode=u.referralCode ?? "";
     u.isAdmin     = u.isAdmin     ?? u.role === "admin";
     u.bitcoin     = u.bitcoin     ?? u.bitcoinAddress;
     u.litecoin    = u.litecoin    ?? u.litecoinAddress;
+    u.referralCode = u.referralCode ?? "";
     return u;
   } catch { return null; }
 }

@@ -6,7 +6,6 @@ import { DashLayout } from "@/components/layout/DashLayout";
 import { CryptoTicker } from "@/components/ui/CryptoTicker";
 import { getUser } from "@/lib/auth";
 import { apiGetMyWithdrawals } from "@/lib/api";
-import { COIN_PRICES } from "@/lib/data";
 import { formatUSD } from "@/lib/utils";
 import {
   ArrowUpFromLine, Clock, CheckCircle, XCircle,

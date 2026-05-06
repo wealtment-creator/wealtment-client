@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { CryptoTicker } from "@/components/ui/CryptoTicker";
 import { getUser } from "@/lib/auth";
-import { apiGetAllDeposits,  apiApproveDeposit } from "@/lib/api";
+import { apiGetAllDeposits, apiApproveDeposit, apiRejectDeposit, apiDeleteDeposit } from "@/lib/api";
 import { COIN_PRICES } from "@/lib/data";
 import { formatUSD } from "@/lib/utils";
 import {
@@ -51,7 +51,10 @@ export default function AdminDepositsPage() {
   const [filter,    setFilter]    = useState<FilterStatus>("all");
   const [search,    setSearch]    = useState("");
   const [viewModal, setViewModal] = useState<Deposit | null>(null);
+  const [rejectModal, setRejectModal] = useState<Deposit | null>(null);
   const [fundAmount,setFundAmount]= useState("");
+  const [coinType, setCoinType] = useState<"bitcoin" | "litecoin">("bitcoin");
+  const [description, setDescription] = useState("");
   const [loading,   setLoading]   = useState(true);
   const [actionId,  setActionId]  = useState<string | null>(null);
   const fetchData = useCallback(async () => {
@@ -67,10 +70,12 @@ export default function AdminDepositsPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // Pre-fill amount when opening modal
+  // Pre-fill amount and default coin type when opening modal
   const openModal = (d: Deposit) => {
     setViewModal(d);
     setFundAmount(String(d.amount));
+    setCoinType(d.coinType === "litecoin" ? "litecoin" : "bitcoin");
+    setDescription("");
   };
 
   //  const handleFundUser = async () => {
@@ -90,9 +95,8 @@ export default function AdminDepositsPage() {
   //     toast.error(e instanceof Error ? e.message : "Fund failed.");
   //   } finally { setActionId(null); }
   // };
-    const [description, setDescription] = useState("");
 
-   const handleFundUser = async () => {
+  const handleFundUser = async () => {
     if (!viewModal) return;
     const amt = parseFloat(fundAmount);
     if (!amt || amt <= 0) { toast.error("Enter a valid amount."); return; }
@@ -100,13 +104,45 @@ export default function AdminDepositsPage() {
     if (!uid) { toast.error("User ID not found."); return; }
     setActionId(viewModal._id);
     try {
-      // PUT /admin/fund-user/:userId  body: { amount }
       await apiApproveDeposit(viewModal._id, description);
       setDeposits((p) => p.map((x) => x._id === viewModal._id ? { ...x, status: "approved" } : x));
       setViewModal(null);
       toast.success(`${userName(viewModal)} funded with ${amt} ${`$`}!`);
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : "Fund failed.");
+    } finally { setActionId(null); }
+  };
+
+  const openRejectModal = (d: Deposit) => {
+    setRejectModal(d);
+    setDescription("");
+  };
+
+  const handleConfirmRejectDeposit = async () => {
+    if (!rejectModal) return;
+    // if (!description.trim()) { toast.error("Please include a rejection reason."); return; }
+    setActionId(rejectModal._id);
+    try {
+      await apiRejectDeposit(rejectModal._id, description);
+      setDeposits((p) => p.map((x) => x._id === rejectModal._id ? { ...x, status: "rejected" } : x));
+      if (viewModal?._id === rejectModal._id) setViewModal((prev) => prev ? { ...prev, status: "rejected" } : prev);
+      toast.success("Deposit rejected.");
+      setRejectModal(null);
+      setDescription("");
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Reject failed.");
+    } finally { setActionId(null); }
+  };
+
+  const handleDeleteDeposit = async (id: string) => {
+    setActionId(id);
+    try {
+      await apiDeleteDeposit(id);
+      setDeposits((p) => p.filter((x) => x._id !== id));
+      if (viewModal?._id === id) setViewModal(null);
+      toast.success("Deposit deleted.");
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Delete failed.");
     } finally { setActionId(null); }
   };
 
@@ -184,7 +220,7 @@ export default function AdminDepositsPage() {
 
         {/* Filter buttons */}
         <div className="flex flex-wrap gap-3">
-          {(["all", "pending", "approved"] as FilterStatus[]).map((s) => {
+          {(["all", "pending", "approved", "rejected"] as FilterStatus[]).map((s) => {
             const label: Record<FilterStatus, string> = { all: "All", pending: "Pending", approved: "Approved", rejected: "Rejected" };
             const active = filter === s;
             return (
@@ -242,17 +278,27 @@ export default function AdminDepositsPage() {
                                 </div>
                               </div>
                               <p className="text-xs text-[var(--muted)]">{fmtDate(d.createdAt)}</p>
-                              <div className="flex gap-2">
+                              <div className="flex gap-2 flex-wrap">
                                 <button onClick={() => openModal(d)}
-                                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[var(--border-2)] text-[var(--muted)] hover:border-[var(--gold)] hover:text-[var(--gold)] transition-colors">
+                                  className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[var(--border-2)] text-[var(--muted)] hover:border-[var(--gold)] hover:text-[var(--gold)] transition-colors">
                                   <Eye size={12} /> Details
                                 </button>
                                 {d.status === "pending" && (
                                   <button onClick={() => openModal(d)}
-                                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(52,211,153,0.3)] text-[var(--green)] bg-[rgba(52,211,153,0.06)] hover:bg-[rgba(52,211,153,0.14)] transition-colors">
+                                    className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(52,211,153,0.3)] text-[var(--green)] bg-[rgba(52,211,153,0.06)] hover:bg-[rgba(52,211,153,0.14)] transition-colors">
                                     <DollarSign size={12} /> Fund User
                                   </button>
                                 )}
+                                {d.status === "pending" && (
+                                  <button onClick={() => openRejectModal(d)} disabled={actionId === d._id}
+                                    className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(239,68,68,0.3)] text-[var(--red)] bg-[rgba(239,68,68,0.08)] hover:bg-[rgba(239,68,68,0.16)] transition-colors disabled:opacity-50">
+                                    Reject
+                                  </button>
+                                )}
+                                <button onClick={() => handleDeleteDeposit(d._id)} disabled={actionId === d._id}
+                                  className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(128,128,128,0.3)] text-[var(--muted)] bg-[rgba(148,163,184,0.06)] hover:bg-[rgba(148,163,184,0.14)] transition-colors disabled:opacity-50">
+                                  Delete
+                                </button>
                               </div>
                             </div>
                           );
@@ -316,6 +362,16 @@ export default function AdminDepositsPage() {
                                           <DollarSign size={10} /> Fund User
                                         </button>
                                       )}
+                                      {d.status === "pending" && (
+                                        <button onClick={() => openRejectModal(d)} disabled={actionId === d._id}
+                                          className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[rgba(239,68,68,0.3)] text-[var(--red)] bg-[rgba(239,68,68,0.08)] hover:bg-[rgba(239,68,68,0.16)] transition-colors disabled:opacity-50">
+                                          Reject
+                                        </button>
+                                      )}
+                                      <button onClick={() => handleDeleteDeposit(d._id)} disabled={actionId === d._id}
+                                        className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[rgba(148,163,184,0.3)] text-[var(--muted)] bg-[rgba(148,163,184,0.06)] hover:bg-[rgba(148,163,184,0.14)] transition-colors disabled:opacity-50">
+                                        Delete
+                                      </button>
                                     </div>
                                   </td>
                                 </tr>
@@ -381,6 +437,21 @@ export default function AdminDepositsPage() {
         <>
           <div className="border-t border-[var(--border)] pt-4">
             <p className="text-xs font-bold tracking-widest uppercase text-[var(--muted)] mb-1">
+              Coin Type
+            </p>
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              {(["bitcoin", "litecoin"] as const).map((coin) => (
+                <button
+                  key={coin}
+                  type="button"
+                  onClick={() => setCoinType(coin)}
+                  className={`rounded-xl px-3 py-3 text-xs font-bold transition-all border ${coinType === coin ? "border-[var(--gold)] bg-[var(--gold)] text-black" : "border-[var(--border)] bg-[var(--bg-3)] text-[var(--text)] hover:border-[var(--gold)]"}`}>
+                  {coin === "bitcoin" ? "Bitcoin (BTC)" : "Litecoin (LTC)"}
+                </button>
+              ))}
+            </div>
+
+            <p className="text-xs font-bold tracking-widest uppercase text-[var(--muted)] mb-1">
               Amount to Credit (USD — editable)
             </p>
 
@@ -394,7 +465,6 @@ export default function AdminDepositsPage() {
                 className="w-full px-4 py-3 pr-16 rounded-lg bg-[var(--bg-3)] border border-[var(--border)] text-[var(--text)] text-sm outline-none focus:border-[var(--gold)] transition-colors font-mono"
               />
 
-              {/* you can keep coin label OR change to $ if you want */}
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--gold)]">
                 $
               </span>
@@ -436,7 +506,29 @@ export default function AdminDepositsPage() {
     </div>
   )}
 </Modal>
-    </DashLayout>
+
+    <Modal open={!!rejectModal} onClose={() => setRejectModal(null)} title="Reject Deposit">
+      {rejectModal && (
+        <div className="space-y-4 mt-2">
+          <p className="text-sm text-[var(--muted)]">Provide a reason for rejecting this deposit.</p>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="e.g. Invalid proof of payment, wrong amount, etc."
+            className="w-full h-28 p-3 rounded-xl bg-[var(--bg-3)] border border-[var(--border)] text-sm outline-none focus:border-[var(--gold)] resize-none"
+          />
+          <button
+            onClick={handleConfirmRejectDeposit}
+            disabled={actionId === rejectModal._id}
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[var(--red)] to-[rgba(239,68,68,0.8)] text-white font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-60"
+          >
+            {actionId === rejectModal._id ? "Processing…" : "Confirm Reject"}
+          </button>
+        </div>
+      )}
+    </Modal>
+      </DashLayout>
+
   );
 }
 

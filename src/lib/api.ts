@@ -8,7 +8,7 @@ export const apiSignup = (body: {
   password: string;
   bitcoinAddress?: string;
   litecoinAddress?: string;
-  referral?: string;
+  referralCode?: string;
 }) => endpointRoute.post("/auth/signup", body).then((r) => r.data);
 
 export const apiLogin = (body: { email: string; password: string }) =>
@@ -116,9 +116,30 @@ export const apiGetAllUsers = () =>
 export const apiDeleteUser= (id: string) =>
   endpointRoute.delete(`/admin/user/${id}`).then((r) => r.data);
 
+// reject deposit
+export const apiRejectDeposit= (id: string, description:string) =>
+  endpointRoute.put(`/admin/deposit/reject/${id}`,{
+    description
+  }).then((r) => r.data);
+
+  
+// deleteDeposit
+export const apiDeleteDeposit= (id: string) =>
+  endpointRoute.delete(`/admin/deposit/${id}`).then((r) => r.data);
+
+export const apiRejectWithdrawal= (id: string, description:string) =>
+  endpointRoute.put(`/admin/withdrawal/reject/${id}`,{
+    description
+  }).then((r) => r.data);
+
+  
+// deleteWithdrawal
+export const apiDeleteWithdrawal= (id: string) =>
+  endpointRoute.delete(`/admin/withdrawal/${id}`).then((r) => r.data);
 // referral
 export const apiGetReferrals = () =>
   endpointRoute.get("/user/referrals").then((r) => r.data);
+
 export const apiTransferReferral = (amount: string) =>
   endpointRoute.post("/user/transfer-referral", { amount }).then((r) => r.data);
 // apiGetBalance() → GET /user/balance → returns { success, balance }
