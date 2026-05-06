@@ -177,18 +177,14 @@ console.log('selectedUser',selectedUser)
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed."); }
     finally { setActionId(null); }
   };
-const [loadingDelete,setLoadingDelete]=useState(false)
   const handleDeleteUser = async (id:string) => {
-    setLoadingDelete(true)
+    setActionId(id);
     try {
       await apiDeleteUser(id);
-      // setUsers((p) => p.map((u) => u._id === selectedUser._id ? { ...u, balance: u.balance - amt } : u));
       setUsers((p)=>p.filter((item)=>item._id!==id))
-      toast.success(`user deleted successfully`);
-      closeModal();
-      setLoadingDelete(false)
+      toast.success(`User deleted successfully`);
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed."); }
-    finally { setActionId(null), setLoadingDelete(false) }
+    finally { setActionId(null); }
   };
 
   const handleEmailAll = async () => {
@@ -348,11 +344,10 @@ const [loadingDelete,setLoadingDelete]=useState(false)
 </button>
        <button
   onClick={() => handleDeleteUser(u._id)}
-  className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-white bg-red-500 hover:opacity-80 transition-colors"
+  disabled={actionId === u._id}
+  className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-white bg-red-500 hover:opacity-80 transition-colors disabled:opacity-50"
 >
- 
-
-  {loadingDelete? "Deleting..":"Delete"}
+  {actionId === u._id ? "Deleting..." : "Delete"}
 </button>
                   </div>
                   <p className="text-xs text-[var(--muted)]">Joined {fmtDate(u.createdAt)}</p>
@@ -418,11 +413,10 @@ const [loadingDelete,setLoadingDelete]=useState(false)
 </button>
   <button
   onClick={() => handleDeleteUser(u._id)}
-  className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-white bg-red-500 hover:opacity-80 transition-colors"
+  disabled={actionId === u._id}
+  className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-white bg-red-500 hover:opacity-80 transition-colors disabled:opacity-50"
 >
- 
-
-  {loadingDelete? "Deleting..":"Delete"}
+  {actionId === u._id ? "Deleting..." : "Delete"}
 </button>
                         </div>
                       </td>

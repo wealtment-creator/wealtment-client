@@ -164,6 +164,7 @@ export interface User {
   ltcBalance: number;
   package: string | null;
   bitcoin?: string;
+  referralCode?: string;
   litecoin?: string;
   bitcoinBalance?: number|string|null;
   litecoinBalance?: number|string|null;

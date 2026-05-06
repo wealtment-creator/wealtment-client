@@ -32,6 +32,8 @@ interface ReferralsData {
   totalEarnings: number;
   referrals: Referral[];
   referralCode:string;
+  
+referralName:string
 }
 
 function fmtDate(iso: string) {
