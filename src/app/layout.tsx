@@ -1,49 +1,11 @@
 // import type { Metadata } from "next";
 import "./globals.css";
-// import { ConditionalShell } from "@/components/layout/ConditionalShell";
-// import { Toaster } from "react-hot-toast";
 
-// export const metadata: Metadata = {
-//   title: "Wealtment Limited – Professional Forex & Crypto Trading",
-//   description: "Grow your capital with Wealtment Limited. Professional trading on Forex markets. UK registered. Instant withdrawals.",
-// };
-
-// export default function RootLayout({ children }: { children: React.ReactNode }) {
-//   return (
-//     <html lang="en">
-//       <head>
-//         <link rel="preconnect" href="https://fonts.googleapis.com" />
-//         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-//         <link
-//           href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap"
-//           rel="stylesheet"
-//         />
-//       </head>
-//       <body>
-//         <Toaster
-//           position="top-right"
-//           toastOptions={{
-//             style: {
-//               background: "#0b1623",
-//               color: "#e8edf5",
-//               border: "1px solid rgba(255,255,255,0.1)",
-//               fontFamily: "DM Sans, sans-serif",
-//               fontSize: "0.875rem",
-//             },
-//           }}
-//         />
-//         <ConditionalShell>{children}</ConditionalShell>
-//       </body>
-//     </html>
-//   );
-// }
 
 import type { Metadata } from "next";
 import Script from "next/script";
 import { ConditionalShell } from "@/components/layout/ConditionalShell";
 import { Toaster } from "react-hot-toast";
-// import { useInactivityLogout } from "@/hooks/useInactivityLogout";
-
 export const metadata: Metadata = {
   title: "Wealtment Limited – Professional Forex & Crypto Trading",
   description:
@@ -97,7 +59,7 @@ export default function RootLayout({
         />
 
         <ConditionalShell>{children}
-          
+{/*           
           <Script id="tawkto" strategy="afterInteractive">
   {`
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
@@ -111,7 +73,33 @@ export default function RootLayout({
       s0.parentNode.insertBefore(s1, s0);
     })();
   `}
-</Script>
+</Script> */}
+
+  <Script id="smartsupp-chat" strategy="afterInteractive">
+          {`
+            var _smartsupp = _smartsupp || {};
+            _smartsupp.key = "9ed28a42b8f0d2dcd0af12c0b8c032da08036ef7"
+            // 'c63a70e9b506416b3d744b547c94dd23562f9987';
+
+            window.smartsupp || (function(d) {
+              var s, c, o = smartsupp = function() {
+                o._.push(arguments);
+              };
+              
+              o._ = [];
+              
+              s = d.getElementsByTagName('script')[0];
+              c = d.createElement('script');
+              
+              c.type = 'text/javascript';
+              c.charset = 'utf-8';
+              c.async = true;
+              c.src = 'https://www.smartsuppchat.com/loader.js?';
+              
+              s.parentNode.insertBefore(c, s);
+            })(document);
+          `}
+        </Script>
         </ConditionalShell>
       </body>
     </html>
