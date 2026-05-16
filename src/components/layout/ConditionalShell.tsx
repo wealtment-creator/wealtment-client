@@ -2,7 +2,9 @@
 import { usePathname } from "next/navigation";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
-import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import SmartsuppTracker from "./SmartSuppTracker";
+import { useInactivityLogout } from "../../hooks/useInactivityLogout";
+
 const NO_SHELL = ["/login", "/signup", "/forgot-password", "/reset-password", "/user", "/admin"];
 
 export function ConditionalShell({ children }: { children: React.ReactNode }) {
@@ -16,7 +18,7 @@ export function ConditionalShell({ children }: { children: React.ReactNode }) {
     <>
       <Navbar />
       <main className="pt-16"> 
-        
+        <SmartsuppTracker/>
         {children}</main>
       <Footer />
     </>
