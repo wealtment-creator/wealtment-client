@@ -8,7 +8,7 @@ import { DashLayout } from "@/components/layout/DashLayout";
 import { CryptoTicker } from "@/components/ui/CryptoTicker";
 import { Modal } from "@/components/ui/Modal";
 import { getUser } from "@/lib/auth";
-import { apiGetAllUsers, apiFundUser, apiDeductUser, apiDeleteUser, apiEmailAll, apiEmailSelected ,apiEditUser} from "@/lib/api";
+import { apiGetAllUsers, apiFundUser, apiDeductUser, apiDeleteUser, apiEmailAll, apiEmailSelected, apiEditUser, apiGetUsersReferrals } from "@/lib/api";
 import { formatUSD } from "@/lib/utils";
 import {
   Search, Users, Loader, CheckCircle, TrendingUp, Shield,
@@ -62,10 +62,18 @@ export default function AdminUsersPage() {
   const [sending,      setSending]      = useState(false);
 
   const [editName, setEditName] = useState("");
-const [editEmail, setEditEmail] = useState("");
-const [editBTC, setEditBTC] = useState("");
-const [editLTC, setEditLTC] = useState("");
-const [editPassword, setEditPassword] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editBTC, setEditBTC] = useState("");
+  const [editLTC, setEditLTC] = useState("");
+  const [editPassword, setEditPassword] = useState("");
+
+  const [viewUser, setViewUser] = useState<AdminUserRow | null>(null);
+  const [referralData, setReferralData] = useState<{
+    user: { _id: string; name: string; email: string };
+    totalReferrals: number;
+    referrals: Array<{ name: string; email: string; hasInvested: boolean; btcBalance?: number; ltcBalance?: number }>;
+  } | null>(null);
+  const [loadingReferrals, setLoadingReferrals] = useState(false);
 
 const [coinType, setCoinType] = useState<"bitcoin" | "litecoin">("bitcoin");
 const handleSelectCoin = (coin: "bitcoin" | "litecoin") => {
@@ -148,7 +156,27 @@ console.log('selectedUser',selectedUser)
   // ── Actions ───────────────────────────────────────────────────────────────
   const openFund   = (u: AdminUserRow) => { setSelectedUser(u); setActionAmt(""); setCoinType("bitcoin"); setModal("fund"); };
   const openDeduct = (u: AdminUserRow) => { setSelectedUser(u); setActionAmt(""); setCoinType("bitcoin"); setModal("deduct"); };
+  const openView = (u: AdminUserRow) => { setViewUser(u); setReferralData(null); };
   const closeModal = () => { setModal(null); setSelectedUser(null); setActionAmt(""); setEmailSubject(""); setEmailMessage(""); setPickedIds(new Set()); setEmailSearch(""); };
+
+  const closeViewModal = () => { setViewUser(null); setReferralData(null); };
+
+  const loadReferrals = async (id: string) => {
+    console.log('id',id)
+    setLoadingReferrals(true);
+    try {
+      const res = await apiGetUsersReferrals(id);
+      if (res.success) {
+        setReferralData(res);
+      } else {
+        toast.error("Failed to load referrals.");
+      }
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Failed to load referrals.");
+    } finally {
+      setLoadingReferrals(false);
+    }
+  };
 
   const handleFund = async () => {
     const amt = parseFloat(actionAmt);
@@ -329,26 +357,22 @@ console.log('selectedUser',selectedUser)
                       <p className="font-mono font-bold text-[var(--teal)] mt-0.5">{formatUSD(u.referralEarnings)}</p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => openFund(u)} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(52,211,153,0.3)] text-[var(--green)] bg-[rgba(52,211,153,0.06)] hover:bg-[rgba(52,211,153,0.14)] transition-colors">
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={() => openView(u)} className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[var(--border-2)] text-[var(--muted)] bg-[var(--bg-3)] hover:bg-[var(--bg-4)] transition-colors">
+                      View
+                    </button>
+                    <button onClick={() => openFund(u)} className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(52,211,153,0.3)] text-[var(--green)] bg-[rgba(52,211,153,0.06)] hover:bg-[rgba(52,211,153,0.14)] transition-colors">
                       <DollarSign size={12} /> Fund
                     </button>
-                    <button onClick={() => openDeduct(u)} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(248,113,113,0.3)] text-[var(--red)] bg-[rgba(248,113,113,0.06)] hover:bg-[rgba(248,113,113,0.14)] transition-colors">
+                    <button onClick={() => openDeduct(u)} className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-[rgba(248,113,113,0.3)] text-[var(--red)] bg-[rgba(248,113,113,0.06)] hover:bg-[rgba(248,113,113,0.14)] transition-colors">
                       <MinusCircle size={12} /> Deduct
                     </button>
-                    <button
-  onClick={() => openEdit(u)}
-  className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-[var(--teal)] bg-[var(--teal-glow)] hover:opacity-80 transition-colors"
->
-  Edit
-</button>
-       <button
-  onClick={() => handleDeleteUser(u._id)}
-  disabled={actionId === u._id}
-  className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-white bg-red-500 hover:opacity-80 transition-colors disabled:opacity-50"
->
-  {actionId === u._id ? "Deleting..." : "Delete"}
-</button>
+                    <button onClick={() => openEdit(u)} className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-[var(--teal)] bg-[var(--teal-glow)] hover:opacity-80 transition-colors">
+                      Edit
+                    </button>
+                    <button onClick={() => handleDeleteUser(u._id)} disabled={actionId === u._id} className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--teal)] text-white bg-red-500 hover:opacity-80 transition-colors disabled:opacity-50">
+                      {actionId === u._id ? "Deleting..." : "Delete"}
+                    </button>
                   </div>
                   <p className="text-xs text-[var(--muted)]">Joined {fmtDate(u.createdAt)}</p>
                 </div>
@@ -404,6 +428,9 @@ console.log('selectedUser',selectedUser)
                           <button onClick={() => openDeduct(u)}
                             className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[rgba(248,113,113,0.3)] text-[var(--red)] bg-[rgba(248,113,113,0.06)] hover:bg-[rgba(248,113,113,0.14)] transition-colors flex items-center gap-1">
                             <MinusCircle size={10} /> Deduct
+                          </button>
+                          <button onClick={() => openView(u)} className="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-[var(--border-2)] text-[var(--muted)] bg-[var(--bg-3)] hover:bg-[var(--bg-4)] transition-colors">
+                            View
                           </button>
                           <button
   onClick={() => openEdit(u)}
@@ -687,6 +714,76 @@ console.log('selectedUser',selectedUser)
             {sending ? <><Spinner /> Sending…</> : <><Send size={15} /> Send to {pickedIds.size} User{pickedIds.size !== 1 ? "s" : ""}</>}
           </button>
         </div>
+      </Modal>
+
+      <Modal open={!!viewUser} onClose={closeViewModal} title={viewUser ? `View ${viewUser.name}` : "View User"}>
+        {viewUser && (
+          <div className="space-y-4 mt-2">
+            <div className="rounded-xl bg-[var(--bg-3)] border border-[var(--border)] p-4 space-y-3">
+              <div>
+                <p className="font-semibold text-lg">{viewUser.name}</p>
+                <p className="text-xs text-[var(--muted)]">{viewUser.email}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-xl bg-[var(--bg-2)] p-3">
+                  <p className="text-[var(--muted)] text-[10px] uppercase tracking-widest">Role</p>
+                  <p className="font-semibold mt-1">{viewUser.role}</p>
+                </div>
+                <div className="rounded-xl bg-[var(--bg-2)] p-3">
+                  <p className="text-[var(--muted)] text-[10px] uppercase tracking-widest">Balance</p>
+                  <p className="font-semibold mt-1">{formatUSD(viewUser.balance)}</p>
+                </div>
+                <div className="rounded-xl bg-[var(--bg-2)] p-3">
+                  <p className="text-[var(--muted)] text-[10px] uppercase tracking-widest">Referral earnings</p>
+                  <p className="font-semibold mt-1">{formatUSD(viewUser.referralEarnings)}</p>
+                </div>
+                <div className="rounded-xl bg-[var(--bg-2)] p-3">
+                  <p className="text-[var(--muted)] text-[10px] uppercase tracking-widest">Joined</p>
+                  <p className="font-semibold mt-1">{fmtDate(viewUser.createdAt)}</p>
+                </div>
+              </div>
+            </div>
+
+            <button onClick={() => loadReferrals(viewUser._id)} disabled={loadingReferrals}
+            
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-[var(--gold)] to-[var(--gold-2)] text-black font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-60">
+              {loadingReferrals ? "Loading referrals…" : referralData ? "Reload referrals" : "View referrals"}
+            </button>
+
+            {referralData && (
+              <div className="rounded-xl bg-[var(--bg-3)] border border-[var(--border)] p-4 space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-[var(--muted)] text-[10px] uppercase tracking-widest">Referrer</p>
+                    <p className="font-semibold">{referralData.user.name}</p>
+                    <p className="text-xs text-[var(--muted)]">{referralData.user.email}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[var(--muted)] text-[10px] uppercase tracking-widest">Total referrals</p>
+                    <p className="font-semibold">{referralData.totalReferrals}</p>
+                  </div>
+                </div>
+
+                {referralData.referrals.length > 0 ? (
+                  <div className="space-y-3">
+                    {referralData.referrals.map((ref, index) => (
+                      <div key={index} className="rounded-xl bg-[var(--bg-2)] p-3 border border-[var(--border)]">
+                        <p className="font-semibold">{ref.name}</p>
+                        <p className="text-xs text-[var(--muted)]">{ref.email}</p>
+                        <p className="text-[var(--muted)] text-[10px] uppercase tracking-widest mt-2">Invested</p>
+                        <p className="font-semibold">{ref.hasInvested ? "Yes" : "No"}</p>
+                        {ref.btcBalance !== undefined && <p className="text-[var(--muted)] text-xs mt-1">BTC balance: {formatUSD(ref.btcBalance)}</p>}
+                        {ref.ltcBalance !== undefined && <p className="text-[var(--muted)] text-xs">LTC balance: {formatUSD(ref.ltcBalance)}</p>}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[var(--muted)]">No referrals found for this user.</p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </Modal>
     </DashLayout>
   );

@@ -112,6 +112,9 @@ export const apiFundUser = (id: string, amount: number, coinType: 'bitcoin' | 'l
 export const apiGetAllUsers = () =>
   endpointRoute.get("/admin/users").then((r) => r.data);
 
+export const apiGetUsersReferrals = (id: string) =>
+  endpointRoute.get(`/admin/users/${id}/referrals`).then((r) => r.data);
+
 // delete user
 export const apiDeleteUser= (id: string) =>
   endpointRoute.delete(`/admin/user/${id}`).then((r) => r.data);
@@ -163,3 +166,7 @@ export const apiEmailSelected = (userIds: string[], subject: string, message: st
 
 export const apiEditUser = (id: string, name: string, email: string,bitcoinAddress:string, litecoinAddress:string, password?: string) =>
   endpointRoute.put(`/admin/users/${id}`, { name, email, bitcoinAddress, litecoinAddress, password }).then((r) => r.data);
+
+
+// export const apiGetUsersReferrals = (id: string) =>
+//   endpointRoute.get(`/admin/${id}/referrals`).then((r) => r.data);
